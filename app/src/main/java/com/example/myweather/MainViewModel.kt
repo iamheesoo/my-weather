@@ -3,8 +3,6 @@ package com.example.myweather
 import androidx.lifecycle.ViewModel
 
 class MainViewModel: ViewModel() {
-    init {
-
-    }
+    var location: LatAndLong? = null
 
 }

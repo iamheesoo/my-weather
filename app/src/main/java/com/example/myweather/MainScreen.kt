@@ -1,8 +1,7 @@
 package com.example.myweather
 
 import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +29,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.orhanobut.logger.Logger
+import com.google.android.gms.location.LocationServices
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalPagerApi::class,
@@ -37,7 +37,9 @@ import com.orhanobut.logger.Logger
 )
 @Composable
 @Preview
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainViewModel
+) {
     val pagerState = rememberPagerState()
     val permissionList = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -53,6 +55,15 @@ fun MainScreen() {
         }
     ) { innerPadding ->
         if (permissionList.allPermissionsGranted) {
+            val client = LocationServices.getFusedLocationProviderClient(LocalContext.current)
+            client.lastLocation
+                .addOnSuccessListener {
+                    viewModel.location =
+                        LatAndLong(latitude = it.latitude, longitude = it.longitude)
+                }
+                .addOnFailureListener {
+                    Log.i("!!!", "location fail ${it.message}")
+                }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
