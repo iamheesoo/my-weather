@@ -1,5 +1,8 @@
 package com.example.myweather
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,26 +27,43 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.orhanobut.logger.Logger
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalPagerApi::class,
+    ExperimentalPermissionsApi::class
+)
 @Composable
 @Preview
 fun MainScreen() {
     val pagerState = rememberPagerState()
+    val permissionList = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ),
+        onPermissionsResult = {}
+    )
 
     Scaffold(
         bottomBar = {
             BottomBar(pagerState = pagerState)
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            HorizontalPager(count = 2, state = pagerState) {
-                Text(text = "$it")
+        if (permissionList.allPermissionsGranted) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                HorizontalPager(count = 2, state = pagerState) {
+                    Text(text = "$it")
+                }
             }
+        } else {
+            permissionList.launchMultiplePermissionRequest()
         }
     }
 }
