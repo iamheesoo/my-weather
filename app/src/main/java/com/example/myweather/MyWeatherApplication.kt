@@ -25,9 +25,9 @@ class MyWeatherApplication : Application() {
             .build()
 
         Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-            override fun isLoggable(priority: Int, tag: String?): Boolean {
-                return BuildConfig.DEBUG
-            }
+//            override fun isLoggable(priority: Int, tag: String?): Boolean {
+//                return BuildConfig.DEBUG
+//            }
         })
     }
 }

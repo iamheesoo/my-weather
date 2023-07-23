@@ -1,6 +1,7 @@
 package com.example.myweather
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,13 +31,14 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
+import com.orhanobut.logger.Logger
 
+@SuppressLint("MissingPermission")
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalPagerApi::class,
     ExperimentalPermissionsApi::class
 )
 @Composable
-@Preview
 fun MainScreen(
     viewModel: MainViewModel
 ) {
@@ -60,9 +62,11 @@ fun MainScreen(
                 .addOnSuccessListener {
                     viewModel.location =
                         LatAndLong(latitude = it.latitude, longitude = it.longitude)
+                    Logger.d("location ${it.latitude} ${it.longitude}")
+                    viewModel.requestGetWeather() // fixme heesoo
                 }
                 .addOnFailureListener {
-                    Log.i("!!!", "location fail ${it.message}")
+                    Logger.d("location fail ${it.message}")
                 }
             Box(
                 modifier = Modifier
