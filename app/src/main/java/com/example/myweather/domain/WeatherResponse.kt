@@ -6,91 +6,91 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WeatherResponse(
     @SerialName("coord")
-    val coord: CoordData,
+    val coord: CoordData? = null,
     @SerialName("weather")
-    val weather: List<WeatherData>,
+    val weather: List<WeatherData>? = null,
     @SerialName("base")
-    val base: String,
+    val base: String? = null,
     @SerialName("main")
-    val main: MainData,
+    val main: MainData? = null,
     @SerialName("visibility")
-    val visibility: Int,
+    val visibility: Int? = null,
     @SerialName("wind")
-    val wind: WindData,
+    val wind: WindData? = null,
     @SerialName("clouds")
-    val clouds: CloudsData,
+    val clouds: CloudsData? = null,
     @SerialName("rain")
     val rain: VolumeData? = null,
     @SerialName("snow")
     val snow: VolumeData? = null,
     @SerialName("dt")
-    val dt: Long,
+    val dt: Long? = null,
     @SerialName("sys")
-    val sys: SysData,
+    val sys: SysData? = null,
     @SerialName("timezone")
-    val timezone: Long,
+    val timezone: Long? = null,
     @SerialName("id")
-    val id: Int,
+    val id: Int? = null,
     @SerialName("name")
-    val name: String,
+    val name: String? = null,
     @SerialName("cod")
-    val cod: Int
+    val cod: Int? = null
 )
 
 @Serializable
 data class CoordData(
     @SerialName("lon")
-    val lon: Double,
+    val lon: Double? = null,
     @SerialName("lat")
-    val lat: Double
+    val lat: Double? = null
 )
 
 @Serializable
 data class WeatherData(
     @SerialName("id")
-    val id: Int,
+    val id: Int? = null,
     @SerialName("main")
-    val main: String,
+    val main: String? = null,
     @SerialName("description")
-    val description: String,
+    val description: String? = null,
     @SerialName("icon")
-    val icon: String
+    val icon: String? = null
 )
 
 @Serializable
 data class MainData(
     @SerialName("temp")
-    val temp: Double,
+    val temp: Double? = null,
     @SerialName("feels_like")
-    val feelsLike: Double,
+    val feelsLike: Double? = null,
     @SerialName("temp_min")
-    val tempMin: Double,
+    val tempMin: Double? = null,
     @SerialName("temp_max")
-    val tempMax: Double,
+    val tempMax: Double? = null,
     @SerialName("pressure")
-    val pressure: Int,
+    val pressure: Int? = null,
     @SerialName("humidity")
-    val humidity: Int,
+    val humidity: Int? = null,
     @SerialName("sea_level")
-    val seaLevel: Int,
+    val seaLevel: Int? = null,
     @SerialName("grnd_level")
-    val grndLevel: Int
+    val grndLevel: Int? = null
 )
 
 @Serializable
 data class WindData(
     @SerialName("speed")
-    val speed:Double,
+    val speed:Double? = null,
     @SerialName("deg")
-    val deg: Int,
+    val deg: Int? = null,
     @SerialName("gust")
-    val gust: Double
+    val gust: Double? = null
 )
 
 @Serializable
 data class CloudsData(
     @SerialName("all")
-    val all: Int
+    val all: Int? = null
 )
 
 @Serializable
@@ -104,13 +104,13 @@ data class VolumeData(
 @Serializable
 data class SysData(
     @SerialName("type")
-    val type: Int,
+    val type: Int? = null,
     @SerialName("id")
-    val id: Int,
+    val id: Int? = null,
     @SerialName("country")
-    val country: String,
+    val country: String? = null,
     @SerialName("sunrise")
-    val sunrise: Long,
+    val sunrise: Long? = null,
     @SerialName("sunset")
-    val sunset: Long
+    val sunset: Long? = null
 )

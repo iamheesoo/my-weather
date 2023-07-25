@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.myweather.mylocation.MyLocationScreen
 import com.example.myweather.ui.theme.Azure
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -42,6 +45,7 @@ import com.orhanobut.logger.Logger
 fun MainScreen(
     viewModel: MainViewModel
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState()
     val permissionList = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -63,7 +67,7 @@ fun MainScreen(
                     viewModel.location =
                         LatAndLong(latitude = it.latitude, longitude = it.longitude)
                     Logger.d("location ${it.latitude} ${it.longitude}")
-                    viewModel.requestGetWeather() // fixme heesoo
+//                    viewModel.requestGetWeather() // fixme heesoo
                 }
                 .addOnFailureListener {
                     Logger.d("location fail ${it.message}")
@@ -74,7 +78,20 @@ fun MainScreen(
                     .padding(innerPadding)
             ) {
                 HorizontalPager(count = 2, state = pagerState) {
-                    Text(text = "$it")
+                    Column {
+                        when (it) {
+                            0 -> MyLocationScreen()
+                            else -> Text(text = "$it") // todo
+                        }
+                        /*
+                        if (it == 0) {
+                            Logger.d("it==0 ${uiState.value.weather?.weather?.firstOrNull()?.main}")
+                            Text(
+                                text = uiState.value.weather?.weather?.firstOrNull()?.main ?: "no!"
+                            )
+                        }
+                         */
+                    }
                 }
             }
         } else {

@@ -6,13 +6,18 @@ import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val weatherRepository: WeatherRepository
 ) : ViewModel() {
     var location: LatAndLong? = null
+
+    var uiState = MutableStateFlow<MainUiState>(MainUiState())
+    private set
 
     fun requestGetWeather() {
         location?.let { _location ->
@@ -22,6 +27,9 @@ class MainViewModel(
                         when(it) {
                             is ApiState.Success -> {
                                 Logger.d("success ${it.data}")
+                                uiState.update { currentState ->
+                                    currentState.copy(weather = it.data)
+                                }
                             }
                             is ApiState.Error -> {
                                 // todo error 처리
