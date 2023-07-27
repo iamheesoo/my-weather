@@ -108,4 +108,12 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
 
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+    def mediaVersion = "1.1.0"
+    implementation "androidx.media3:media3-exoplayer:$mediaVersion"
+    implementation "androidx.media3:media3-ui:$mediaVersion"
+    implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
+
+    implementation 'com.google.accompanist:accompanist-insets:0.23.1'
 }

@@ -1,117 +1,95 @@
 package com.example.myweather.mylocation
 
-import android.util.Log.e
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import com.example.myweather.R
+import com.example.myweather.composable.CustomTopAppBar
+import com.example.myweather.utils.buildExoPlayer
+import com.example.myweather.utils.getVideoUri
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun MyLocationScreen() {
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val scrollState = rememberLazyListState()
-//    CollapsingEffectScreen()
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
+    val videoUri = context.getVideoUri(R.raw.clouds)
+    val exoPlayer = remember { context.buildExoPlayer(videoUri) }
 
-    Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Image(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.FillWidth,
-                            painter = painterResource(id = R.drawable.ic_launcher_background),
-                            contentDescription = null,
-                        )
-                        Text("서울", modifier = Modifier.align(Alignment.Center))
-                    }
-
-                },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = Color.Gray,
-                ),
-                scrollBehavior = scrollBehavior,
-            )
-        },
-    ) { innerPadding ->
-        LazyColumn(
-            state = scrollState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.Yellow)
-                .padding(innerPadding)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-        ) {
-            items(items = List<String>(1000) { "$it" }) {
-                Text(it, modifier = Modifier.fillMaxWidth())
+    Box(modifier = Modifier.fillMaxSize()) {
+        DisposableEffect(Unit) {
+            onDispose {
+                exoPlayer.release()
             }
         }
 
-    }
+        AndroidView(
+            factory = {
+                PlayerView(it).apply {
+                    player = exoPlayer
+                    layoutParams = FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    useController = false
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val (appBar, column) = createRefs()
 
-}
-
-@Composable
-fun CollapsingEffectScreen() {
-    val items = (1..100).map { "Item $it" }
-    val lazyListState = rememberLazyListState()
-    var scrolledY = 0f
-    var previousOffset = 0
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        lazyListState,
-    ) {
-        item {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
+            CustomTopAppBar(
                 modifier = Modifier
-                    .graphicsLayer {
-                        scrolledY += lazyListState.firstVisibleItemScrollOffset - previousOffset
-                        translationY = scrolledY * 0.5f
-                        previousOffset = lazyListState.firstVisibleItemScrollOffset
+                    .constrainAs(appBar) {
+                        linkTo(
+                            top = parent.top,
+                            bottom = column.top
+                        )
                     }
-                    .height(240.dp)
-                    .fillMaxWidth()
             )
-        }
-        items(items) {
-            Text(
-                text = it,
-                Modifier
-                    .background(Color.White)
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .constrainAs(column) {
+                        linkTo(
+                            top = appBar.bottom,
+                            bottom = parent.bottom
+                        )
+                        height = Dimension.preferredWrapContent
+                    }
+            ) {
+                items(items = List<String>(1000) { "$it" }) {
+                    Text(
+                        it, modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+            createVerticalChain(appBar, column, chainStyle = ChainStyle.Packed)
         }
     }
 }
