@@ -1,4 +1,4 @@
-package com.example.myweather
+package com.example.myweather.data
 
 data class LatAndLong(
     val latitude: Double,

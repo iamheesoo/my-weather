@@ -2,6 +2,7 @@ package com.example.myweather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
 import com.orhanobut.logger.Logger

@@ -2,11 +2,15 @@ package com.example.myweather.mylocation
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +35,8 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.myweather.R
 import com.example.myweather.composable.CustomTopAppBar
+import com.example.myweather.composable.HourWeather
+import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.getVideoUri
 
@@ -100,14 +106,44 @@ fun MyLocationScreen() {
                             bottom = parent.bottom
                         )
                         height = Dimension.preferredWrapContent
-                    }
+                    },
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(items = List<String>(1000) { "$it" }) {
-                    Text(
-                        it, modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                weatherContent(
+                    titleIconId = R.drawable.round_access_alarm_24,
+                    titleText = "시간별 일기예보",
+                    content = {
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            List<String>(100) { "$it" }.forEachIndexed { index, s ->
+                                item {
+                                    HourWeather(
+                                        timeText = if (index == 0) "지금" else "${s}시",
+                                        degree = index.toDouble()
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+                )
+                item {
+                    Spacer(modifier = Modifier.height(50.dp))
                 }
+                weatherContent(
+                    titleIconId = R.drawable.round_calendar_month_24,
+                    titleText = "10일간의 일기예보",
+                    content = {
+                        List<String>(100) { "$it" }.forEach {
+                            Text(
+                                it, modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
+                )
             }
             createVerticalChain(appBar, column, chainStyle = ChainStyle.Packed)
         }
