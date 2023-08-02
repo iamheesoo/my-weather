@@ -1,5 +1,6 @@
 package com.example.myweather.composable
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,16 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 @Preview
-fun CustomTopAppBar(modifier: Modifier = Modifier) {
+fun CustomTopAppBar(modifier: Modifier = Modifier, height: Dp = 400.dp) {
     Column(
         modifier = modifier
+            .animateContentSize()
             .fillMaxWidth()
-            .height(400.dp),
+            .height(height),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
