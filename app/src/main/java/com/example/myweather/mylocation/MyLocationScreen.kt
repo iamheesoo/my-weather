@@ -2,6 +2,7 @@ package com.example.myweather.mylocation
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,20 +24,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.constraintlayout.compose.ChainStyle
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.myweather.R
 import com.example.myweather.composable.CustomTopAppBar
 import com.example.myweather.composable.HourWeather
+import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.getVideoUri
@@ -81,71 +82,72 @@ fun MyLocationScreen() {
             },
             modifier = Modifier.fillMaxSize()
         )
-        ConstraintLayout(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val (appBar, column) = createRefs()
-
-            CustomTopAppBar(
-                modifier = Modifier
-                    .constrainAs(appBar) {
-                        linkTo(
-                            top = parent.top,
-                            bottom = column.top
-                        )
-                    },
-                height = customTopAppBarHeight
-            )
-
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .constrainAs(column) {
-                        linkTo(
-                            top = appBar.bottom,
-                            bottom = parent.bottom
-                        )
-                        height = Dimension.preferredWrapContent
-                    },
-                contentPadding = PaddingValues(horizontal = 16.dp)
-            ) {
-                weatherContent(
-                    titleIconId = R.drawable.round_access_alarm_24,
-                    titleText = "시간별 일기예보",
-                    content = {
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            List<String>(100) { "$it" }.forEachIndexed { index, s ->
-                                item {
-                                    HourWeather(
-                                        timeText = if (index == 0) "지금" else "${s}시",
-                                        degree = index.toDouble()
-                                    )
+        TransparentColumn(
+            modifier = Modifier.fillMaxSize(),
+            header = { _modifier ->
+                CustomTopAppBar(
+                    modifier = _modifier,
+                    height = customTopAppBarHeight
+                )
+            },
+            content = { _modifier ->
+                LazyColumn(
+                    state = listState,
+                    modifier = _modifier,
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    weatherContent(
+                        titleIconId = R.drawable.round_access_alarm_24,
+                        titleText = "시간별 일기예보",
+                        content = {
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(color = Color.Black.copy(alpha = 0.3f))
+                                    .padding(horizontal = 14.dp),
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                List<String>(100) { "$it" }.forEachIndexed { index, s ->
+                                    item {
+                                        HourWeather(
+                                            timeText = if (index == 0) "지금" else "${s}시",
+                                            degree = index.toDouble()
+                                        )
+                                    }
                                 }
                             }
                         }
+                    )
 
+                    item {
+                        Spacer(modifier = Modifier.height(50.dp))
                     }
-                )
-                item {
-                    Spacer(modifier = Modifier.height(50.dp))
-                }
-                weatherContent(
-                    titleIconId = R.drawable.round_calendar_month_24,
-                    titleText = "10일간의 일기예보",
-                    content = {
-                        List<String>(100) { "$it" }.forEach {
+
+                    weatherContent(
+                        titleIconId = R.drawable.round_calendar_month_24,
+                        titleText = "10일간의 일기예보",
+                        content = {
+                            List<String>(100) { "$it" }.forEach {
+                                Text(
+                                    it, modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
+                    )
+
+
+                    List<String>(100) { "test $it" }.forEach {
+                        item {
                             Text(
                                 it, modifier = Modifier
                                     .fillMaxWidth()
                             )
                         }
+
                     }
-                )
+                }
             }
-            createVerticalChain(appBar, column, chainStyle = ChainStyle.Packed)
-        }
+        )
     }
 }

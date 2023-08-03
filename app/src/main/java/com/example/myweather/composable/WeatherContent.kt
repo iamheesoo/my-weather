@@ -19,12 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.myweather.R
 
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.weatherContent(
-    @DrawableRes titleIconId: Int = R.drawable.baseline_circle_24,
-    titleText: String = "text",
+    @DrawableRes titleIconId: Int,
+    titleText: String,
     content: @Composable () -> Unit = {}
 ) {
     stickyHeader {
@@ -36,7 +35,7 @@ fun LazyListScope.weatherContent(
                         topStart = 16.dp,
                         topEnd = 16.dp
                     ),
-                    color = Color.Black.copy(alpha = 0.3f)
+                    color = Color.Black//.copy(alpha = 0.3f)
                 )
                 .padding(vertical = 8.dp, horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -58,13 +57,7 @@ fun LazyListScope.weatherContent(
     }
 
     item {
-        Box(
-            modifier = Modifier
-                .background(color = Color.Black.copy(alpha = 0.3f))
-                .padding(horizontal = 14.dp)
-        ) {
-            content()
-        }
+        content.invoke()
     }
 
     stickyHeader {
@@ -76,9 +69,10 @@ fun LazyListScope.weatherContent(
                         bottomStart = 16.dp,
                         bottomEnd = 16.dp
                     ),
-                    color = Color.Transparent.copy(alpha = 0.3f)
+                    color = Color.Black//.copy(alpha = 0.3f)
                 )
                 .padding(vertical = 8.dp, horizontal = 14.dp),
         )
     }
 }
+
