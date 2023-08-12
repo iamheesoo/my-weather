@@ -42,9 +42,10 @@ import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.getVideoUri
 
 @Composable
-@Preview
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-fun MyLocationScreen() {
+fun WeatherInfoScreen(
+    viewModel: WeatherInfoViewModel
+) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val videoUri = context.getVideoUri(R.raw.clouds)
@@ -59,7 +60,6 @@ fun MyLocationScreen() {
     LaunchedEffect(listFirstVisibleItemIndex) {
         customTopAppBarHeight = max(400.dp - (listFirstVisibleItemIndex.times(30.dp)), 100.dp)
     }
-
 
     Box(modifier = Modifier.fillMaxSize()) {
         DisposableEffect(Unit) {

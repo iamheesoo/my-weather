@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myweather.data.LatAndLong
-import com.example.myweather.mylocation.MyLocationScreen
+import com.example.myweather.mylocation.WeatherInfoScreen
 import com.example.myweather.ui.theme.Azure
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -60,13 +60,19 @@ fun MainScreen(
         }
     ) { innerPadding ->
         if (permissionList.allPermissionsGranted) {
+            /**
+             * 현재 위치와 SharedPreference에 저장된 위치 리스트를 가져온다
+             *
+             */
             val client = LocationServices.getFusedLocationProviderClient(LocalContext.current)
             client.lastLocation
                 .addOnSuccessListener {
-                    viewModel.location =
-                        LatAndLong(latitude = it.latitude, longitude = it.longitude)
+                    viewModel.sendEvent(
+                        MainContract.Event.UpdateCurrentLocation(
+                            location = LatAndLong(latitude = it.latitude, longitude = it.longitude)
+                        )
+                    )
                     Logger.d("location ${it.latitude} ${it.longitude}")
-//                    viewModel.requestGetWeather() // fixme heesoo
                 }
                 .addOnFailureListener {
                     Logger.d("location fail ${it.message}")
@@ -78,11 +84,12 @@ fun MainScreen(
             ) {
                 HorizontalPager(count = 2, state = pagerState) {
                     Column {
+
+                        /*
                         when (it) {
-                            0 -> MyLocationScreen()
+                            0 -> WeatherInfoScreen()
                             else -> Text(text = "$it") // todo
                         }
-                        /*
                         if (it == 0) {
                             Logger.d("it==0 ${uiState.value.weather?.weather?.firstOrNull()?.main}")
                             Text(

@@ -1,35 +1,37 @@
-package com.example.myweather
+package com.example.myweather.mylocation
 
+import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
+import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class MainViewModel(
+class WeatherInfoViewModel(
+    val location: LatAndLong,
     private val weatherRepository: WeatherRepository
-) : BaseMviViewModel<MainContract.State, MainContract.Event, MainContract.Effect>() {
-    var locationMap: HashMap<Int, LatAndLong> = hashMapOf()
+): BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
+    init {
+        // loadData
+        requestGetWeather(location)
+    }
 
-    override fun createInitialState(): MainContract.State {
-        return MainContract.State(
+    override fun createInitialState(): WeatherInfoContract.State {
+        return WeatherInfoContract.State(
 
         )
     }
 
-    override fun handleEvent(event: MainContract.Event) {
+    override fun handleEvent(event: WeatherInfoContract.Event) {
         when (event) {
-            is MainContract.Event.UpdateCurrentLocation -> {
-                locationMap[event.pageIndex] = event.location
-//                requestGetWeather(event.location)
-            }
-
             else -> {}
         }
-
-
     }
 
-    /*
     private fun requestGetWeather(location: LatAndLong) {
         viewModelScope.launch(Dispatchers.IO) {
             weatherRepository.getWeather(lat = location.latitude, lon = location.longitude)
@@ -53,6 +55,4 @@ class MainViewModel(
         }
 
     }
-
-     */
 }
