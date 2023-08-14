@@ -11,7 +11,9 @@ class WeatherInfoContract {
         val weather: WeatherResponse? = null
     ): UiState
 
-    sealed class Event: UiEvent
+    sealed class Event: UiEvent {
+        object RequestWeatherInfo: Event()
+    }
 
     sealed class Effect: UiEffect
 }

@@ -3,6 +3,7 @@ package com.example.myweather
 import com.example.myweather.domain.ApiService
 import com.example.myweather.domain.WeatherRepository
 import com.example.myweather.domain.WeatherRepositoryImpl
+import com.example.myweather.mylocation.WeatherInfoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,6 +13,7 @@ val appModule = module {
 
 val viewModelModule = module {
     viewModel { MainViewModel(get()) }
+    viewModel { WeatherInfoViewModel(get()) }
 }
 
 val apiModule = module {

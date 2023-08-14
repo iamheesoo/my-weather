@@ -8,7 +8,8 @@ import com.example.myweather.domain.WeatherResponse
 
 class MainContract {
     data class State(
-        val weather: WeatherResponse? = null
+        val weather: WeatherResponse? = null,
+        val currentLocation: LatAndLong? = null
     ) : UiState
 
     sealed class Event: UiEvent {

@@ -26,11 +26,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.myweather.R
@@ -40,12 +40,15 @@ import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.getVideoUri
+import kotlin.math.roundToInt
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun WeatherInfoScreen(
     viewModel: WeatherInfoViewModel
 ) {
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val weather = state.value.weather
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val videoUri = context.getVideoUri(R.raw.clouds)
@@ -82,72 +85,80 @@ fun WeatherInfoScreen(
             },
             modifier = Modifier.fillMaxSize()
         )
-        TransparentColumn(
-            modifier = Modifier.fillMaxSize(),
-            header = { _modifier ->
-                CustomTopAppBar(
-                    modifier = _modifier,
-                    height = customTopAppBarHeight
-                )
-            },
-            content = { _modifier ->
-                LazyColumn(
-                    state = listState,
-                    modifier = _modifier,
-                    contentPadding = PaddingValues(horizontal = 16.dp)
-                ) {
-                    weatherContent(
-                        titleIconId = R.drawable.round_access_alarm_24,
-                        titleText = "시간별 일기예보",
-                        content = {
-                            LazyRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(color = Color.Black.copy(alpha = 0.3f))
-                                    .padding(horizontal = 14.dp),
-                                horizontalArrangement = Arrangement.spacedBy(5.dp)
-                            ) {
-                                List<String>(100) { "$it" }.forEachIndexed { index, s ->
-                                    item {
-                                        HourWeather(
-                                            timeText = if (index == 0) "지금" else "${s}시",
-                                            degree = index.toDouble()
-                                        )
+        if (weather == null) {
+            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
+            Text("WeatherInfoContract.Event.RequestWeatherInfo")
+        } else {
+            TransparentColumn(
+                modifier = Modifier.fillMaxSize(),
+                header = { _modifier ->
+                    CustomTopAppBar(
+                        modifier = _modifier,
+                        height = customTopAppBarHeight,
+                        locationName = weather.name ?: "locationName",
+                        temperature = weather.main?.temp?.roundToInt() ?: 0
+                    )
+                },
+                content = { _modifier ->
+                    LazyColumn(
+                        state = listState,
+                        modifier = _modifier,
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) {
+                        weatherContent(
+                            titleIconId = R.drawable.round_access_alarm_24,
+                            titleText = "시간별 일기예보",
+                            content = {
+                                LazyRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(color = Color.Black.copy(alpha = 0.3f))
+                                        .padding(horizontal = 14.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                ) {
+                                    List<String>(100) { "$it" }.forEachIndexed { index, s ->
+                                        item {
+                                            HourWeather(
+                                                timeText = if (index == 0) "지금" else "${s}시",
+                                                degree = index.toDouble()
+                                            )
+                                        }
                                     }
                                 }
                             }
+                        )
+
+                        item {
+                            Spacer(modifier = Modifier.height(50.dp))
                         }
-                    )
 
-                    item {
-                        Spacer(modifier = Modifier.height(50.dp))
-                    }
+                        weatherContent(
+                            titleIconId = R.drawable.round_calendar_month_24,
+                            titleText = "10일간의 일기예보",
+                            content = {
+                                List<String>(100) { "$it" }.forEach {
+                                    Text(
+                                        it, modifier = Modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            }
+                        )
 
-                    weatherContent(
-                        titleIconId = R.drawable.round_calendar_month_24,
-                        titleText = "10일간의 일기예보",
-                        content = {
-                            List<String>(100) { "$it" }.forEach {
+
+                        List<String>(100) { "test $it" }.forEach {
+                            item {
                                 Text(
                                     it, modifier = Modifier
                                         .fillMaxWidth()
                                 )
                             }
+
                         }
-                    )
-
-
-                    List<String>(100) { "test $it" }.forEach {
-                        item {
-                            Text(
-                                it, modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                        }
-
                     }
                 }
-            }
-        )
+            )
+        }
+
     }
 }

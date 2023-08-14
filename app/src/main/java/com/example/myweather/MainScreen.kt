@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.mylocation.WeatherInfoScreen
+import com.example.myweather.mylocation.WeatherInfoViewModel
 import com.example.myweather.ui.theme.Azure
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -34,6 +35,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("MissingPermission")
 @OptIn(
@@ -82,23 +84,63 @@ fun MainScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                HorizontalPager(count = 2, state = pagerState) {
-                    Column {
+                if (uiState.value.currentLocation != null) {
+                    Text(text = "currentLocation ${uiState.value.currentLocation}")
+                    HorizontalPager(count = 2, state = pagerState) {
+                        Column {
+                            when (it) {
+                                0 -> {
+                                    /*
+                                    val weatherInfoViewModel: WeatherInfoViewModel by viewModel {
+                                        parametersOf(uiState.value.currentLocation)
+                                    }
 
-                        /*
-                        when (it) {
-                            0 -> WeatherInfoScreen()
-                            else -> Text(text = "$it") // todo
+                                    val weatherInfoViewModel: WeatherInfoViewModel =
+                                        getViewModel<WeatherInfoViewModel>(
+                                            owner = getComposeActivityViewModelOwner(),
+                                            parameters = { parametersOf(uiState.value.currentLocation) })
+
+
+                                     */
+                                    val weatherInfoViewModel = koinViewModel<WeatherInfoViewModel>().apply {
+                                        location = uiState.value.currentLocation!!
+                                    }
+                                    Logger.d("weatherInfoVIewModel ${weatherInfoViewModel.location}")
+                                    WeatherInfoScreen(weatherInfoViewModel)
+                                }
+
+                                else -> Text(text = "$it") // todo
+                            }
                         }
-                        if (it == 0) {
-                            Logger.d("it==0 ${uiState.value.weather?.weather?.firstOrNull()?.main}")
-                            Text(
-                                text = uiState.value.weather?.weather?.firstOrNull()?.main ?: "no!"
-                            )
+                    }
+                } else {
+                    Text(text = "currentLocation null") // todo
+                }
+
+                /*
+        HorizontalPager(count = 2, state = pagerState) {
+            Column {
+
+
+                when (it) {
+                    0 -> {
+                        val viewModel: WeatherInfoViewModel by viewModel {
+                            parametersOf(viewModel.)
                         }
-                         */
+                        WeatherInfoScreen(viewModel)
+                    }
+
+                    else -> Text(text = "$it") // todo
+                }
+                if (it == 0) {
+                    Logger.d("it==0 ${uiState.value.weather?.weather?.firstOrNull()?.main}")
+                    Text(
+                        text = uiState.value.weather?.weather?.firstOrNull()?.main ?: "no!"
+                    )
+                }
                     }
                 }
+                 */
             }
         } else {
             permissionList.launchMultiplePermissionRequest()

@@ -11,28 +11,50 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class WeatherInfoViewModel(
-    val location: LatAndLong,
     private val weatherRepository: WeatherRepository
 ): BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
+
+    var location: LatAndLong? = null
     init {
-        // loadData
-        requestGetWeather(location)
+        Logger.d("WeatherInfoViewModel location $location")
     }
 
-    override fun createInitialState(): WeatherInfoContract.State {
+
+    override fun createState(): WeatherInfoContract.State {
+        Logger.d("createState")
         return WeatherInfoContract.State(
 
         )
     }
 
+    override fun initialState() {
+        Logger.d("initialState")
+
+    }
+
+    override fun loadData() {
+        Logger.d("loadData")
+//        location?.let {
+//            requestGetWeather(it)
+//        }
+
+    }
+
     override fun handleEvent(event: WeatherInfoContract.Event) {
+        Logger.d("handleEvent")
         when (event) {
+            WeatherInfoContract.Event.RequestWeatherInfo -> {
+                location?.let { _location ->
+                    requestGetWeather(_location)
+                }
+            }
             else -> {}
         }
     }
 
     private fun requestGetWeather(location: LatAndLong) {
+        Logger.d("requestGetWeather")
         viewModelScope.launch(Dispatchers.IO) {
             weatherRepository.getWeather(lat = location.latitude, lon = location.longitude)
                 .collectLatest {

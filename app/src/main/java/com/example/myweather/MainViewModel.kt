@@ -10,17 +10,26 @@ class MainViewModel(
     var locationMap: HashMap<Int, LatAndLong> = hashMapOf()
 
 
-    override fun createInitialState(): MainContract.State {
+    override fun createState(): MainContract.State {
         return MainContract.State(
 
         )
     }
 
+    override fun initialState() {
+    }
+
+    override fun loadData() {
+    }
+
     override fun handleEvent(event: MainContract.Event) {
         when (event) {
             is MainContract.Event.UpdateCurrentLocation -> {
-                locationMap[event.pageIndex] = event.location
+//                locationMap[event.pageIndex] = event.location
 //                requestGetWeather(event.location)
+                setState {
+                    copy(currentLocation = event.location)
+                }
             }
 
             else -> {}

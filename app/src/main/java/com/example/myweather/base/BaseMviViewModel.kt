@@ -1,5 +1,7 @@
 package com.example.myweather.base
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -12,13 +14,13 @@ import kotlinx.coroutines.launch
 
 abstract class BaseMviViewModel<State : UiState, Event : UiEvent, Effect : UiEffect> : ViewModel() {
 
-    private val initialState: State by lazy { createInitialState() }
-    abstract fun createInitialState(): State
+    private val createState: State by lazy { createState() }
+    abstract fun createState(): State
 
     val state: State
         get() = uiState.value
 
-    private val _uiState: MutableStateFlow<State> = MutableStateFlow(initialState)
+    private val _uiState: MutableStateFlow<State> = MutableStateFlow(createState)
     val uiState = _uiState.asStateFlow()
 
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
@@ -26,6 +28,11 @@ abstract class BaseMviViewModel<State : UiState, Event : UiEvent, Effect : UiEff
 
     private val _effect: Channel<Effect> = Channel()
     val effect = _effect.receiveAsFlow()
+
+    private val _loadingState: MutableState<BaseContract.LoadState> =
+        mutableStateOf(BaseContract.LoadState.LOADING)
+
+    private val _loadingEvent: MutableSharedFlow<BaseContract.LoadEvent> = MutableSharedFlow()
 
     init {
         subscribeEvents()
@@ -35,6 +42,11 @@ abstract class BaseMviViewModel<State : UiState, Event : UiEvent, Effect : UiEff
      * viewModel이 생성되면 screen의 event를 받을 준비를 한다
      */
     private fun subscribeEvents() {
+        viewModelScope.launch {
+            _loadingEvent.collect {
+                handleLoadingEvent(it)
+            }
+        }
         viewModelScope.launch {
             event.collect {
                 handleEvent(it)
@@ -62,6 +74,41 @@ abstract class BaseMviViewModel<State : UiState, Event : UiEvent, Effect : UiEff
     protected fun setState(reduce: State.() -> State) {
         val newState = state.reduce()
         _uiState.value = newState
+    }
+
+    private fun handleLoadingEvent(event: BaseContract.LoadEvent) {
+        when (event) {
+            is BaseContract.LoadEvent.LoadData -> {
+                loadData() // 데이터요청하고
+                sendLoadingEvent(BaseContract.LoadEvent.Loading) // 로딩중표시
+            }
+            is BaseContract.LoadEvent.Refresh -> {
+                initialState()
+                _loadingState.value = BaseContract.LoadState.REFRESH
+            }
+            is BaseContract.LoadEvent.Loading -> {
+                _loadingState.value = BaseContract.LoadState.LOADING
+            }
+            is BaseContract.LoadEvent.Complete -> {
+                _loadingState.value = BaseContract.LoadState.COMPLETE
+            }
+            is BaseContract.LoadEvent.Error -> {
+                _loadingState.value = BaseContract.LoadState.ERROR
+            }
+        }
+    }
+
+    abstract fun initialState()
+    protected abstract fun loadData()
+
+    open fun onRefresh() {
+        sendLoadingEvent(BaseContract.LoadEvent.Refresh)
+    }
+
+    fun sendLoadingEvent(event: BaseContract.LoadEvent) {
+        viewModelScope.launch {
+            _loadingEvent.emit(event)
+        }
     }
 }
 

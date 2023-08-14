@@ -17,7 +17,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 @Preview
-fun CustomTopAppBar(modifier: Modifier = Modifier, height: Dp = 400.dp) {
+fun CustomTopAppBar(
+    modifier: Modifier = Modifier,
+    height: Dp = 400.dp,
+    locationName: String = "서울특별시",
+    temperature: Int = 33
+) {
     Column(
         modifier = modifier
             .animateContentSize()
@@ -27,10 +32,10 @@ fun CustomTopAppBar(modifier: Modifier = Modifier, height: Dp = 400.dp) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBarText(
-            text = "서울특별시", fontSize = 28.sp
+            text = locationName, fontSize = 28.sp
         )
         TopAppBarText(
-            text = "33°", fontSize = 48.sp
+            text = "$temperature°", fontSize = 48.sp
         )
         TopAppBarText(
             text = "한때 흐림",
