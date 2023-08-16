@@ -95,8 +95,11 @@ fun WeatherInfoScreen(
                     CustomTopAppBar(
                         modifier = _modifier,
                         height = customTopAppBarHeight,
-                        locationName = weather.name ?: "locationName",
-                        temperature = weather.main?.temp?.roundToInt() ?: 0
+                        locationName = weather.name,
+                        temp = weather.main?.temp?.roundToInt(),
+                        description = weather.weather?.firstOrNull()?.description,
+                        tempMax = weather.main?.tempMax?.roundToInt(),
+                        tempMin = weather.main?.tempMin?.roundToInt()
                     )
                 },
                 content = { _modifier ->

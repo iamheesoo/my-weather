@@ -26,7 +26,7 @@ fun LazyListScope.weatherContent(
     titleText: String,
     content: @Composable () -> Unit = {}
 ) {
-    stickyHeader {
+    item {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -35,7 +35,7 @@ fun LazyListScope.weatherContent(
                         topStart = 16.dp,
                         topEnd = 16.dp
                     ),
-                    color = Color.Black//.copy(alpha = 0.3f)
+                    color = Color.Black.copy(alpha = 0.3f)
                 )
                 .padding(vertical = 8.dp, horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -60,7 +60,7 @@ fun LazyListScope.weatherContent(
         content.invoke()
     }
 
-    stickyHeader {
+    item {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -69,7 +69,7 @@ fun LazyListScope.weatherContent(
                         bottomStart = 16.dp,
                         bottomEnd = 16.dp
                     ),
-                    color = Color.Black//.copy(alpha = 0.3f)
+                    color = Color.Black.copy(alpha = 0.3f)
                 )
                 .padding(vertical = 8.dp, horizontal = 14.dp),
         )

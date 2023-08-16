@@ -14,6 +14,7 @@ class WeatherRepositoryImpl(
                 this["lon"] = lon.toString()
                 this["appid"] = BuildConfig.WEATHER_API_KEY
                 this["lang"] = "kr"
+                this["units"] = "metric"
             }
             emit(
                 apiCallSerialize {

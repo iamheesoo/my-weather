@@ -10,18 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-@Preview
 fun CustomTopAppBar(
     modifier: Modifier = Modifier,
     height: Dp = 400.dp,
-    locationName: String = "서울특별시",
-    temperature: Int = 33
+    locationName: String?,
+    temp: Int?,
+    description: String?,
+    tempMin: Int?,
+    tempMax: Int?
 ) {
     Column(
         modifier = modifier
@@ -32,19 +33,19 @@ fun CustomTopAppBar(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBarText(
-            text = locationName, fontSize = 28.sp
+            text = locationName ?: "-", fontSize = 28.sp
         )
         TopAppBarText(
-            text = "$temperature°", fontSize = 48.sp
+            text = "$temp°", fontSize = 48.sp
         )
         TopAppBarText(
-            text = "한때 흐림",
+            text = description ?: "-",
         )
         Row {
-            TopAppBarText(text = "최고 34°")
+            TopAppBarText(text = if (tempMax != null)"최고 $tempMax°" else "-")
             TopAppBarText(
                 modifier = Modifier.padding(start = 10.dp),
-                text = "최저 23°"
+                text =  if (tempMax != null)"최저 $tempMin°" else "-"
             )
         }
     }
