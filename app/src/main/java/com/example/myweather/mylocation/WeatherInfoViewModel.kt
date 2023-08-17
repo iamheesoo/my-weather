@@ -5,6 +5,7 @@ import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
+import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -12,10 +13,11 @@ import kotlinx.coroutines.launch
 
 class WeatherInfoViewModel(
     private val weatherRepository: WeatherRepository
-): BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
+) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
 
     var location: LatAndLong? = null
+
     init {
         Logger.d("WeatherInfoViewModel location $location")
     }
@@ -47,8 +49,10 @@ class WeatherInfoViewModel(
             WeatherInfoContract.Event.RequestWeatherInfo -> {
                 location?.let { _location ->
                     requestGetWeather(_location)
+                    requestGetWeatherHourly(_location)
                 }
             }
+
             else -> {}
         }
     }
@@ -75,6 +79,34 @@ class WeatherInfoViewModel(
 
 
         }
-
     }
+
+    private fun requestGetWeatherHourly(location: LatAndLong) {
+        viewModelScope.launch(Dispatchers.IO) {
+            weatherRepository.getWeatherHourly(lat = location.latitude, lon = location.longitude)
+                .collectLatest {
+                    when (it) {
+                        is ApiState.Success -> {
+                            Logger.d("success ${it.data}")
+                            setState {
+                                copy(weatherHourly = it.data)
+                            }
+                            val currentTime = System.currentTimeMillis()
+                            val list = it.data?.list?.filter {
+                                (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
+                            }
+                            setState {
+                                copy(weatherHourlyList = list)
+                            }
+                        }
+
+                        is ApiState.Error -> {
+                            // todo error 처리
+                            Logger.d("error ${it.data}")
+                        }
+                    }
+                }
+        }
+    }
+
 }

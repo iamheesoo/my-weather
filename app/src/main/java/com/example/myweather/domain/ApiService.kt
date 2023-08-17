@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object ApiService {
-    private const val API_URL = "https://api.openweathermap.org/"
+    private const val API_URL = "https://api.openweathermap.org/data/2.5/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(

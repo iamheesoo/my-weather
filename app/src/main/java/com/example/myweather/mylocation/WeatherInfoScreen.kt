@@ -39,6 +39,7 @@ import com.example.myweather.composable.HourWeather
 import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
+import com.example.myweather.utils.dtTxtToHour
 import com.example.myweather.utils.getVideoUri
 import kotlin.math.roundToInt
 
@@ -49,6 +50,8 @@ fun WeatherInfoScreen(
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val weather = state.value.weather
+    val weatherHourlyList = state.value.weatherHourlyList
+
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val videoUri = context.getVideoUri(R.raw.clouds)
@@ -97,7 +100,7 @@ fun WeatherInfoScreen(
                         height = customTopAppBarHeight,
                         locationName = weather.name,
                         temp = weather.main?.temp?.roundToInt(),
-                        description = weather.weather?.firstOrNull()?.description,
+                        description = weather.weatherList?.firstOrNull()?.description,
                         tempMax = weather.main?.tempMax?.roundToInt(),
                         tempMin = weather.main?.tempMin?.roundToInt()
                     )
@@ -112,18 +115,18 @@ fun WeatherInfoScreen(
                             titleIconId = R.drawable.round_access_alarm_24,
                             titleText = "시간별 일기예보",
                             content = {
-                                LazyRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(color = Color.Black.copy(alpha = 0.3f))
-                                        .padding(horizontal = 14.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                                ) {
-                                    List<String>(100) { "$it" }.forEachIndexed { index, s ->
-                                        item {
+                                if (weatherHourlyList?.isNotEmpty() == true) {
+                                    LazyRow(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(color = Color.Black.copy(alpha = 0.3f))
+                                            .padding(horizontal = 14.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                    ) {
+                                        items(weatherHourlyList.size) { index ->
                                             HourWeather(
-                                                timeText = if (index == 0) "지금" else "${s}시",
-                                                degree = index.toDouble()
+                                                hour = weatherHourlyList[index].dtTxt?.dtTxtToHour(),
+                                                temp = weatherHourlyList[index].main?.temp?.roundToInt() ?: 0
                                             )
                                         }
                                     }

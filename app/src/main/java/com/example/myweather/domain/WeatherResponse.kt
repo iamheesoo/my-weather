@@ -8,7 +8,7 @@ data class WeatherResponse(
     @SerialName("coord")
     val coord: CoordData? = null,
     @SerialName("weather")
-    val weather: List<WeatherData>? = null,
+    val weatherList: List<WeatherData>? = null,
     @SerialName("base")
     val base: String? = null,
     @SerialName("main")
@@ -39,10 +39,10 @@ data class WeatherResponse(
 
 @Serializable
 data class CoordData(
-    @SerialName("lon")
-    val lon: Double? = null,
     @SerialName("lat")
-    val lat: Double? = null
+    val lat: Double? = null,
+    @SerialName("lon")
+    val lon: Double? = null
 )
 
 @Serializable
@@ -112,5 +112,7 @@ data class SysData(
     @SerialName("sunrise")
     val sunrise: Long? = null,
     @SerialName("sunset")
-    val sunset: Long? = null
+    val sunset: Long? = null,
+    @SerialName("pod")
+    val pod: String? = null, // d: day, n: night
 )
