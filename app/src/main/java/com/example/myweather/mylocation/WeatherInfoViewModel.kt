@@ -92,9 +92,11 @@ class WeatherInfoViewModel(
                                 copy(weatherHourly = it.data)
                             }
                             val currentTime = System.currentTimeMillis()
-                            val list = it.data?.list?.filter {
-                                (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
-                            }
+                            val list = it.data?.list
+                                ?.filter {
+                                    (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
+                                }
+                                ?.take(10)
                             setState {
                                 copy(weatherHourlyList = list)
                             }

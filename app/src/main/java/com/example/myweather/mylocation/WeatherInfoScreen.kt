@@ -41,6 +41,7 @@ import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.dtTxtToHour
 import com.example.myweather.utils.getVideoUri
+import com.example.myweather.utils.getWeatherIconDrawable
 import kotlin.math.roundToInt
 
 @Composable
@@ -126,7 +127,8 @@ fun WeatherInfoScreen(
                                         items(weatherHourlyList.size) { index ->
                                             HourWeather(
                                                 hour = weatherHourlyList[index].dtTxt?.dtTxtToHour(),
-                                                temp = weatherHourlyList[index].main?.temp?.roundToInt() ?: 0
+                                                temp = weatherHourlyList[index].main?.temp?.roundToInt() ?: 0,
+                                                icon = context.getWeatherIconDrawable(weatherHourlyList[index].weatherList?.firstOrNull()?.icon)
                                             )
                                         }
                                     }
