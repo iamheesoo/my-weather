@@ -50,6 +50,7 @@ class WeatherInfoViewModel(
                 location?.let { _location ->
                     requestGetWeather(_location)
                     requestGetWeatherHourly(_location)
+                    requestGetAirPollution(_location)
                 }
             }
 
@@ -102,6 +103,25 @@ class WeatherInfoViewModel(
                             }
                         }
 
+                        is ApiState.Error -> {
+                            // todo error 처리
+                            Logger.d("error ${it.data}")
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun requestGetAirPollution(location: LatAndLong) {
+        viewModelScope.launch(Dispatchers.IO) {
+            weatherRepository.getAirPollution(lat = location.latitude, lon = location.longitude)
+                .collectLatest {
+                    when (it) {
+                        is ApiState.Success -> {
+                            setState {
+                                copy(airPollution = it.data)
+                            }
+                        }
                         is ApiState.Error -> {
                             // todo error 처리
                             Logger.d("error ${it.data}")

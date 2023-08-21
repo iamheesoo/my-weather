@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.myweather.R
+import com.example.myweather.composable.AirPollutionContent
 import com.example.myweather.composable.CustomTopAppBar
 import com.example.myweather.composable.HourWeather
 import com.example.myweather.composable.TodayWeather
@@ -38,6 +39,7 @@ import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.dtTxtToHour
+import com.example.myweather.utils.getAirQualityInfo
 import com.example.myweather.utils.getVideoUri
 import com.example.myweather.utils.getWeatherIconDrawable
 import kotlin.math.roundToInt
@@ -50,6 +52,7 @@ fun WeatherInfoScreen(
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val weather = state.value.weather
     val weatherHourlyList = state.value.weatherHourlyList
+    val airPollution = state.value.airPollution
 
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -61,6 +64,8 @@ fun WeatherInfoScreen(
     val listFirstVisibleItemIndex by remember {
         derivedStateOf { listState.firstVisibleItemIndex }
     }
+
+    val LAZY_COLUMN_EACH_PADDING = 20.dp
 
     LaunchedEffect(listFirstVisibleItemIndex) {
         customTopAppBarHeight = max(400.dp - (listFirstVisibleItemIndex.times(30.dp)), 100.dp)
@@ -132,7 +137,7 @@ fun WeatherInfoScreen(
                         )
 
                         item {
-                            Spacer(modifier = Modifier.height(50.dp))
+                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
                         }
 
                         weatherContent(
@@ -147,6 +152,28 @@ fun WeatherInfoScreen(
                                 )
                             }
                         )
+
+
+
+                        item {
+                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
+                        }
+
+                        if (airPollution?.list?.firstOrNull() != null) {
+                            val item = airPollution.list.first()
+                            weatherContent(
+                                titleIconId = R.drawable.baseline_blur_on_24,
+                                titleText = "대기질",
+                                content = { _modifier ->
+                                    AirPollutionContent(
+                                        modifier = _modifier,
+                                        aqi = item.main?.aqi ?: 1,
+                                        content = getAirQualityInfo(item.main?.aqi)
+                                    )
+                                }
+                            )
+                        }
+
 
 
                         List<String>(100) { "test $it" }.forEach {

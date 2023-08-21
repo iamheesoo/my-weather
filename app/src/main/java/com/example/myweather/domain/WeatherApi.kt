@@ -14,4 +14,9 @@ interface WeatherApi {
     suspend fun getWeatherHourly(
         @QueryMap map: Map<String, String>
     ): Response<String>
+
+    @GET("air_pollution")
+    suspend fun getAirPollution(
+        @QueryMap map: Map<String, String>
+    ): Response<String>
 }

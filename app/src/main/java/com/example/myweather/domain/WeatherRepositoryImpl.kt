@@ -44,4 +44,22 @@ class WeatherRepositoryImpl(
             )
         }
     }
+
+    override suspend fun getAirPollution(
+        lat: Double,
+        lon: Double
+    ): Flow<ApiState<AirPollutionResponse>> {
+        return flow {
+            val map = hashMapOf<String, String>().apply {
+                this["lat"] = lat.toString()
+                this["lon"] = lon.toString()
+                this["appid"] = BuildConfig.WEATHER_API_KEY
+            }
+            emit(
+                apiCallSerialize {
+                    weatherApi.getAirPollution(map)
+                }
+            )
+        }
+    }
 }
