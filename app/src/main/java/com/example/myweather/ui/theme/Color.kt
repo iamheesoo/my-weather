@@ -11,5 +11,6 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Azure = Color(0xFF37C6FF)
+val Orange = Color(0xFFFF7900)
 
 val PrimaryTextColor = Color.White

@@ -1,7 +1,6 @@
 package com.example.myweather.composable
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,11 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.weatherContent(
     @DrawableRes titleIconId: Int,
     titleText: String,
-    content: @Composable () -> Unit = {}
+    content: @Composable (Modifier) -> Unit
 ) {
     item {
         Row(
@@ -57,7 +55,12 @@ fun LazyListScope.weatherContent(
     }
 
     item {
-        content.invoke()
+        content.invoke(
+            Modifier
+                .fillMaxWidth()
+                .background(color = Color.Black.copy(alpha = 0.3f))
+                .padding(horizontal = 14.dp)
+        )
     }
 
     item {
