@@ -5,6 +5,7 @@ import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
+import com.example.myweather.domain.WeatherResponse
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
@@ -51,6 +52,7 @@ class WeatherInfoViewModel(
                     requestGetWeather(_location)
                     requestGetWeatherHourly(_location)
                     requestGetAirPollution(_location)
+//                    setState { copy(weather = WeatherResponse()) }
                 }
             }
 

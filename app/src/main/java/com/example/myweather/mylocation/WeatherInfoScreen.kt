@@ -32,10 +32,13 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.myweather.R
 import com.example.myweather.composable.AirPollutionContent
+import com.example.myweather.composable.BigTitleContent
 import com.example.myweather.composable.CustomTopAppBar
 import com.example.myweather.composable.HourWeather
 import com.example.myweather.composable.TodayWeather
 import com.example.myweather.composable.TransparentColumn
+import com.example.myweather.composable.VerticalGrid
+import com.example.myweather.composable.VerticalGridContent
 import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.dtTxtToHour
@@ -127,8 +130,11 @@ fun WeatherInfoScreen(
                                         items(weatherHourlyList.size) { index ->
                                             HourWeather(
                                                 hour = weatherHourlyList[index].dtTxt?.dtTxtToHour(),
-                                                temp = weatherHourlyList[index].main?.temp?.roundToInt() ?: 0,
-                                                icon = context.getWeatherIconDrawable(weatherHourlyList[index].weatherList?.firstOrNull()?.icon)
+                                                temp = weatherHourlyList[index].main?.temp?.roundToInt()
+                                                    ?: 0,
+                                                icon = context.getWeatherIconDrawable(
+                                                    weatherHourlyList[index].weatherList?.firstOrNull()?.icon
+                                                )
                                             )
                                         }
                                     }
@@ -172,6 +178,75 @@ fun WeatherInfoScreen(
                                     )
                                 }
                             )
+                        }
+
+
+                        item {
+                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
+                        }
+
+                        item {
+                            VerticalGrid() {
+                                VerticalGridItem.values().forEachIndexed { index, item ->
+                                    VerticalGridContent(
+                                        titleIconId = item.icon,
+                                        titleText = item.title,
+                                        paddingValues = PaddingValues(
+                                            horizontal = 4.dp,
+                                            vertical = 4.dp
+                                        )
+                                    ) { _modifier ->
+                                        when (item) {
+                                            VerticalGridItem.UV -> {
+                                                Text(modifier = _modifier, text = "testtttt")
+                                            }
+
+                                            VerticalGridItem.RAINY -> {
+                                                BigTitleContent(
+                                                    modifier = _modifier,
+                                                    title = if (weather.rain?.hour1 != null) {
+                                                        "${weather.rain.hour1}mm"
+                                                    } else {
+                                                        null
+                                                    }
+                                                )
+                                            }
+
+                                            VerticalGridItem.TEMPERATURE -> {
+                                                val feelsLike = weather.main?.feelsLike ?: 0.0
+                                                val temp = weather.main?.temp ?: 0.0
+                                                BigTitleContent(
+                                                    modifier = _modifier,
+                                                    title = "${weather.main?.feelsLike}°",
+                                                    content = if (feelsLike > temp) {
+                                                        "습도로 인해 더 따뜻하게 느껴지겠습니다."
+                                                    } else {
+                                                        "습도로 인해 더 선선하게 느껴지겠습니다."
+                                                    }
+                                                )
+                                            }
+
+                                            VerticalGridItem.HUMIDITY -> {
+                                                BigTitleContent(
+                                                    modifier = _modifier,
+                                                    title = "${weather.main?.humidity}%"
+                                                )
+                                            }
+
+                                            VerticalGridItem.VISIBILITY -> {
+                                                BigTitleContent(
+                                                    modifier = _modifier,
+                                                    title = "${(weather.visibility ?: 0) / 1000}km"
+                                                )
+                                            }
+
+                                            else -> {
+                                                Text(modifier = _modifier, text = "testtttt2")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
 
