@@ -35,6 +35,7 @@ import com.example.myweather.composable.AirPollutionContent
 import com.example.myweather.composable.BigTitleContent
 import com.example.myweather.composable.CustomTopAppBar
 import com.example.myweather.composable.HourWeather
+import com.example.myweather.composable.PressureContent
 import com.example.myweather.composable.TodayWeather
 import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.VerticalGrid
@@ -245,6 +246,12 @@ fun WeatherInfoScreen(
                                                 BigTitleContent(
                                                     modifier = _modifier,
                                                     title = "${(weather.visibility ?: 0) / 1000}km"
+                                                )
+                                            }
+                                            VerticalGridItem.PRESSURE -> {
+                                                PressureContent(
+                                                    modifier = _modifier,
+                                                    pressure = weather.main?.pressure
                                                 )
                                             }
 
