@@ -39,6 +39,7 @@ import com.example.myweather.composable.TodayWeather
 import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.VerticalGrid
 import com.example.myweather.composable.VerticalGridContent
+import com.example.myweather.composable.WindContent
 import com.example.myweather.composable.weatherContent
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.dtTxtToHour
@@ -199,6 +200,13 @@ fun WeatherInfoScreen(
                                         when (item) {
                                             VerticalGridItem.UV -> {
                                                 Text(modifier = _modifier, text = "testtttt")
+                                            }
+                                            VerticalGridItem.WIND -> {
+                                                WindContent(
+                                                    modifier = _modifier,
+                                                    speed = weather.wind?.speed ?: 0.0,
+                                                    deg = weather.wind?.deg
+                                                )
                                             }
 
                                             VerticalGridItem.RAINY -> {
