@@ -36,6 +36,7 @@ import com.example.myweather.composable.BigTitleContent
 import com.example.myweather.composable.CustomTopAppBar
 import com.example.myweather.composable.HourWeather
 import com.example.myweather.composable.PressureContent
+import com.example.myweather.composable.ReportItem
 import com.example.myweather.composable.TodayWeather
 import com.example.myweather.composable.TransparentColumn
 import com.example.myweather.composable.VerticalGrid
@@ -202,6 +203,7 @@ fun WeatherInfoScreen(
                                             VerticalGridItem.UV -> {
                                                 Text(modifier = _modifier, text = "testtttt")
                                             }
+
                                             VerticalGridItem.WIND -> {
                                                 WindContent(
                                                     modifier = _modifier,
@@ -248,6 +250,7 @@ fun WeatherInfoScreen(
                                                     title = "${(weather.visibility ?: 0) / 1000}km"
                                                 )
                                             }
+
                                             VerticalGridItem.PRESSURE -> {
                                                 PressureContent(
                                                     modifier = _modifier,
@@ -264,15 +267,12 @@ fun WeatherInfoScreen(
                             }
                         }
 
+                        item {
+                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
+                        }
 
-
-                        List<String>(100) { "test $it" }.forEach {
-                            item {
-                                Text(
-                                    it, modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                            }
+                        item {
+                            ReportItem()
                         }
                     }
                 }
