@@ -86,8 +86,9 @@ fun MainScreen(
                 }
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(innerPadding)
+                    .fillMaxWidth()
+                    .also { Logger.d("!!! Box innerPadding $innerPadding") }
             ) {
                 if (uiState.value.currentLocation != null) {
                     Text(text = "currentLocation ${uiState.value.currentLocation}")

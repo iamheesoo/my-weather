@@ -2,16 +2,20 @@ package com.example.myweather.mylocation
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -21,10 +25,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +56,7 @@ import com.example.myweather.composable.VerticalGrid
 import com.example.myweather.composable.VerticalGridContent
 import com.example.myweather.composable.WindContent
 import com.example.myweather.composable.weatherContent
+import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.dtTxtToHour
 import com.example.myweather.utils.getAirQualityInfo
@@ -103,7 +117,6 @@ fun WeatherInfoScreen(
             Text("WeatherInfoContract.Event.RequestWeatherInfo")
         } else {
             TransparentColumn(
-                modifier = Modifier.fillMaxSize(),
                 header = { _modifier ->
                     CustomTopAppBar(
                         modifier = _modifier,
@@ -119,7 +132,8 @@ fun WeatherInfoScreen(
                     LazyColumn(
                         state = listState,
                         modifier = _modifier,
-                        contentPadding = PaddingValues(horizontal = 16.dp)
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         weatherContent(
                             titleIconId = R.drawable.round_access_alarm_24,
@@ -273,6 +287,69 @@ fun WeatherInfoScreen(
 
                         item {
                             ReportItem()
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
+                        }
+
+                        item {
+                            Divider(
+                                thickness = 1.dp,
+                                color = Color.Gray
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    modifier = Modifier.align(Alignment.CenterStart),
+                                    text = "지도에서 열기",
+                                    color = Color.Gray
+                                )
+                                Image(
+                                    modifier = Modifier.align(Alignment.CenterEnd),
+                                    painter = painterResource(id = R.drawable.round_arrow_outward_24),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(Color.Gray)
+                                )
+                            }
+                            Divider(
+                                thickness = 1.dp,
+                                color = Color.Gray
+                            )
+                        }
+
+                        item {
+                            Text(
+                                text = "${weather.name} 날씨",
+                                color = PrimaryTextColor
+                            )
+                        }
+
+                        item {
+                            Text(
+                                modifier = Modifier
+                                    .padding(top = 6.dp),
+                                text = buildAnnotatedString {
+                                    withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                                        append("날씨 데이터")
+                                    }
+                                    append(" 및 ")
+                                    withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                                        append("지도 데이터")
+                                    }
+                                    append("에 관하여 더 알아보기")
+                                },
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+                        }
+
+
+                        item {
+                            Spacer(modifier = Modifier.height(100.dp))
                         }
                     }
                 }
