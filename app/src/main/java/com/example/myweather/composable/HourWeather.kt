@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myweather.ui.theme.PrimaryTextColor
+import com.example.myweather.ui.theme.SubTitle2
 
 @Composable
 fun HourWeather(hour: String?, temp: Int, @DrawableRes icon: Int) {
@@ -24,7 +25,7 @@ fun HourWeather(hour: String?, temp: Int, @DrawableRes icon: Int) {
         Text(
             text = if (hour != null) "${hour}시" else "-",
             color = PrimaryTextColor,
-            fontSize = 14.sp
+            fontSize = SubTitle2.fontSize
         )
         Image(
             painter = painterResource(id = icon),
@@ -36,7 +37,7 @@ fun HourWeather(hour: String?, temp: Int, @DrawableRes icon: Int) {
         Text(
             text = "$temp°",
             color = PrimaryTextColor,
-            fontSize = 14.sp
+            fontSize = SubTitle2.fontSize
         )
     }
 }

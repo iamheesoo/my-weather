@@ -19,6 +19,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.myweather.ui.theme.Orange
 import com.example.myweather.ui.theme.PrimaryTextColor
+import com.example.myweather.ui.theme.SubTitle2
 
 @Composable
 fun TodayWeather(
@@ -42,7 +43,8 @@ fun TodayWeather(
                 )
             },
             text = "오늘",
-            color = PrimaryTextColor
+            color = PrimaryTextColor,
+            fontSize = SubTitle2.fontSize
         )
         Image(
             modifier = Modifier
@@ -108,7 +110,8 @@ fun TodayWeather(
                     )
                 },
             text = if (tempMax != null) "${tempMax}°" else "-",
-            color = PrimaryTextColor
+            color = PrimaryTextColor,
+            fontSize = SubTitle2.fontSize
         )
 
         createHorizontalChain(today, image, minText, rect, maxText, chainStyle = ChainStyle.Spread)

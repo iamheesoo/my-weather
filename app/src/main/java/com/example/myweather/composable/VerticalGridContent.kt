@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.myweather.ui.theme.SubTitle3
 
 @Composable
 fun VerticalGridContent(
@@ -55,7 +56,8 @@ fun VerticalGridContent(
                 modifier = Modifier
                     .padding(start = 5.dp),
                 text = titleText,
-                color = Color.White
+                color = Color.White,
+                fontSize = SubTitle3.fontSize
             )
         }
 

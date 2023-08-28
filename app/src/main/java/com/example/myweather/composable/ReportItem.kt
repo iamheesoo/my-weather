@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myweather.R
+import com.example.myweather.ui.theme.Content2
+import com.example.myweather.ui.theme.Content3
 import com.example.myweather.ui.theme.PrimaryTextColor
 
 @Composable
@@ -43,12 +45,14 @@ fun ReportItem() {
         Column() {
             Text(
                 text = "문제 리포트",
-                color = PrimaryTextColor
+                color = PrimaryTextColor,
+                fontSize = Content2.fontSize
             )
             Text(
                 text = "현재 위치의 기상 상태를 설명하여\n일기예보를 더욱 향상시킬 수 있습니다.",
                 color = Color.LightGray,
-                lineHeight = 18.sp
+                lineHeight = 18.sp,
+                fontSize = Content3.fontSize
             )
         }
     }

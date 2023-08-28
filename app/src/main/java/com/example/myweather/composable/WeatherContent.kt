@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.myweather.ui.theme.SubTitle2
+import com.example.myweather.ui.theme.SubTitle3
 
 fun LazyListScope.weatherContent(
     @DrawableRes titleIconId: Int,
@@ -49,7 +51,8 @@ fun LazyListScope.weatherContent(
                 modifier = Modifier
                     .padding(start = 5.dp),
                 text = titleText,
-                color = Color.White
+                color = Color.White,
+                fontSize = SubTitle2.fontSize
             )
         }
     }

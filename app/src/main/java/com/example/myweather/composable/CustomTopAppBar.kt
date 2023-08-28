@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myweather.ui.theme.SubTitle1
+import com.example.myweather.ui.theme.TopAppBarTitle
 
 @Composable
 fun CustomTopAppBar(
@@ -33,10 +35,10 @@ fun CustomTopAppBar(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBarText(
-            text = locationName ?: "-", fontSize = 28.sp
+            text = locationName ?: "-", style = SubTitle1
         )
         TopAppBarText(
-            text = "$temp°", fontSize = 48.sp
+            text = "$temp°", style = TopAppBarTitle
         )
         TopAppBarText(
             text = description ?: "-",

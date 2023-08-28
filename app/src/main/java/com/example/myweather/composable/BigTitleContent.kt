@@ -10,34 +10,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myweather.ui.theme.Content1
+import com.example.myweather.ui.theme.Content2
 import com.example.myweather.ui.theme.PrimaryTextColor
 
 @Composable
-fun BigTitleContent(modifier: Modifier = Modifier, title: String?, content: String? = null) {
+fun BigTitleContent(
+    modifier: Modifier = Modifier,
+    title: String?,
+    content: String? = null
+) {
     Box(
         modifier = modifier.height(100.dp)
     ) {
         if (title != null) {
             Text(
-                modifier = Modifier.align(if (content != null) Alignment.TopStart else Alignment.Center),
+                modifier = Modifier
+                    .align(if (content != null) Alignment.TopStart else Alignment.Center),
                 text = title,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Medium,
+                fontSize = Content1.fontSize,
+                fontWeight = Content1.fontWeight,
                 color = PrimaryTextColor
             )
             if (content != null) {
                 Text(
                     modifier = Modifier.align(Alignment.BottomStart),
                     text = content,
-                    fontSize = 13.sp,
+                    fontSize = Content2.fontSize,
+                    fontWeight = Content2.fontWeight,
                     color = PrimaryTextColor
                 )
             }
         } else {
             Text(
-                modifier = Modifier.align(Alignment.Center).padding(top = 5.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(top = 5.dp),
                 text = "--",
-                fontSize = 30.sp,
+                fontSize = Content1.fontSize,
                 color = PrimaryTextColor
             )
         }

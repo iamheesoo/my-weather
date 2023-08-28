@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.myweather.ui.theme.Azure
+import com.example.myweather.ui.theme.Content3
 import com.example.myweather.ui.theme.DeepRed
 import com.example.myweather.ui.theme.Orange
 import com.example.myweather.ui.theme.PrimaryTextColor
@@ -41,7 +41,7 @@ fun AirPollutionContent(modifier: Modifier = Modifier, aqi: Int, content: String
             modifier = Modifier.padding(top = 8.dp),
             text = content,
             color = PrimaryTextColor,
-            fontSize = 12.sp
+            fontSize = Content3.fontSize
         )
         Canvas(
             Modifier

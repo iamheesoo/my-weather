@@ -28,11 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.myweather.R
+import com.example.myweather.ui.theme.Content4
 import com.example.myweather.ui.theme.PrimaryTextColor
 
 @Composable
-@Preview
-fun WindContent(modifier: Modifier = Modifier, speed: Double = 2.0, deg: Int? = 204) {
+fun WindContent(modifier: Modifier = Modifier, speed: Double, deg: Int?) {
     var canvasSize by remember {
         mutableStateOf(IntSize.Zero)
     }
@@ -59,25 +59,25 @@ fun WindContent(modifier: Modifier = Modifier, speed: Double = 2.0, deg: Int? = 
             modifier = Modifier.align(Alignment.TopCenter),
             text = "북",
             color = PrimaryTextColor,
-            fontSize = 10.sp
+            fontSize = Content4.fontSize
         )
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
             text = "서",
             color = PrimaryTextColor,
-            fontSize = 10.sp
+            fontSize = Content4.fontSize
         )
         Text(
             modifier = Modifier.align(Alignment.CenterEnd),
             text = "동",
             color = PrimaryTextColor,
-            fontSize = 10.sp
+            fontSize = Content4.fontSize
         )
         Text(
             modifier = Modifier.align(Alignment.BottomCenter),
             text = "남",
             color = PrimaryTextColor,
-            fontSize = 10.sp
+            fontSize = Content4.fontSize
         )
         Text(
             modifier = Modifier

@@ -56,6 +56,7 @@ import com.example.myweather.composable.VerticalGrid
 import com.example.myweather.composable.VerticalGridContent
 import com.example.myweather.composable.WindContent
 import com.example.myweather.composable.weatherContent
+import com.example.myweather.ui.theme.Content3
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.utils.buildExoPlayer
 import com.example.myweather.utils.dtTxtToHour
@@ -306,7 +307,8 @@ fun WeatherInfoScreen(
                                 Text(
                                     modifier = Modifier.align(Alignment.CenterStart),
                                     text = "지도에서 열기",
-                                    color = Color.Gray
+                                    color = Color.Gray,
+                                    fontSize = Content3.fontSize
                                 )
                                 Image(
                                     modifier = Modifier.align(Alignment.CenterEnd),
@@ -324,7 +326,8 @@ fun WeatherInfoScreen(
                         item {
                             Text(
                                 text = "${weather.name} 날씨",
-                                color = PrimaryTextColor
+                                color = PrimaryTextColor,
+                                fontSize = Content3.fontSize
                             )
                         }
 
@@ -343,7 +346,7 @@ fun WeatherInfoScreen(
                                     append("에 관하여 더 알아보기")
                                 },
                                 color = Color.Gray,
-                                fontSize = 11.sp
+                                fontSize = Content3.fontSize
                             )
                         }
 
