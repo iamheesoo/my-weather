@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myweather.R
@@ -23,8 +22,7 @@ import com.example.myweather.ui.theme.Content3
 import com.example.myweather.ui.theme.PrimaryTextColor
 
 @Composable
-@Preview
-fun ReportItem() {
+fun ReportItem(title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +42,7 @@ fun ReportItem() {
         )
         Column() {
             Text(
-                text = "문제 리포트",
+                text = title,
                 color = PrimaryTextColor,
                 fontSize = Content2.fontSize
             )

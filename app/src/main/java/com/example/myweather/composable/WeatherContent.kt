@@ -23,9 +23,11 @@ import com.example.myweather.ui.theme.SubTitle2
 fun LazyListScope.weatherContent(
     @DrawableRes titleIconId: Int,
     titleText: String,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    key: String,
+    contentType: Any
 ) {
-    item {
+    item(key = "weatherContent$key", contentType = "weatherContent$contentType") {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

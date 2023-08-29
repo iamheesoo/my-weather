@@ -2,11 +2,11 @@ package com.example.myweather.mylocation
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -135,16 +134,22 @@ fun WeatherInfoScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        weatherContent(
-                            titleIconId = R.drawable.round_access_alarm_24,
-                            titleText = "시간별 일기예보",
-                            content = {
-                                if (weatherHourlyList?.isNotEmpty() == true) {
+                        if (weatherHourlyList?.isNotEmpty() == true) {
+                            weatherContent(
+                                key = WeatherInfoType.HOUR_WEATHER.name,
+                                contentType = WeatherInfoType.HOUR_WEATHER,
+                                titleIconId = WeatherInfoType.HOUR_WEATHER.icon,
+                                titleText = WeatherInfoType.HOUR_WEATHER.title,
+                                content = {
                                     LazyRow(
                                         contentPadding = PaddingValues(horizontal = 14.dp),
                                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                                     ) {
-                                        items(weatherHourlyList.size) { index ->
+                                        items(
+                                            count = weatherHourlyList.size,
+                                            key = { index -> "${WeatherInfoType.HOUR_WEATHER.name}$index" },
+                                            contentType = { WeatherInfoType.HOUR_WEATHER }
+                                        ) { index ->
                                             HourWeather(
                                                 hour = weatherHourlyList[index].dtTxt?.dtTxtToHour(),
                                                 temp = weatherHourlyList[index].main?.temp?.roundToInt()
@@ -156,12 +161,14 @@ fun WeatherInfoScreen(
                                         }
                                     }
                                 }
-                            }
-                        )
+                            )
+                        }
 
                         weatherContent(
-                            titleIconId = R.drawable.round_calendar_month_24,
-                            titleText = "10일간의 일기예보",
+                            key = WeatherInfoType.TEN_DAY_WEATHER.name,
+                            contentType = WeatherInfoType.TEN_DAY_WEATHER,
+                            titleIconId = WeatherInfoType.TEN_DAY_WEATHER.icon,
+                            titleText = WeatherInfoType.TEN_DAY_WEATHER.title,
                             content = {
                                 TodayWeather(
                                     icon = context.getWeatherIconDrawable(weather.weatherList?.firstOrNull()?.icon),
@@ -174,8 +181,10 @@ fun WeatherInfoScreen(
                         if (airPollution?.list?.firstOrNull() != null) {
                             val item = airPollution.list.first()
                             weatherContent(
-                                titleIconId = R.drawable.baseline_blur_on_24,
-                                titleText = "대기질",
+                                key = WeatherInfoType.AIR_POLLUTION.name,
+                                contentType = WeatherInfoType.AIR_POLLUTION,
+                                titleIconId = WeatherInfoType.AIR_POLLUTION.icon,
+                                titleText = WeatherInfoType.AIR_POLLUTION.title,
                                 content = {
                                     AirPollutionContent(
                                         aqi = item.main?.aqi ?: 1,
@@ -185,16 +194,18 @@ fun WeatherInfoScreen(
                             )
                         }
 
-                        item {
-                            VerticalGrid() {
+                        item(
+                            key = WeatherInfoType.VERTICAL_GRID.name,
+                            contentType = WeatherInfoType.VERTICAL_GRID.name
+                        ) {
+                            VerticalGrid(
+                                columns = 2
+                            ) {
                                 VerticalGridItem.values().forEachIndexed { index, item ->
                                     VerticalGridContent(
                                         titleIconId = item.icon,
                                         titleText = item.title,
-                                        paddingValues = PaddingValues(
-                                            horizontal = 4.dp,
-                                            vertical = 4.dp
-                                        )
+                                        paddingValues = PaddingValues(4.dp)
                                     ) { _modifier ->
                                         when (item) {
                                             VerticalGridItem.UV -> {
@@ -264,8 +275,8 @@ fun WeatherInfoScreen(
                             }
                         }
 
-                        item {
-                            ReportItem()
+                        item(key = WeatherInfoType.REPORT.name) {
+                            ReportItem(title = WeatherInfoType.REPORT.title)
                         }
 
                         item {
@@ -334,4 +345,12 @@ fun WeatherInfoScreen(
         }
 
     }
+}
+
+private enum class WeatherInfoType(val title: String, @DrawableRes val icon: Int) {
+    HOUR_WEATHER("시간별 일기예보", R.drawable.round_access_alarm_24),
+    TEN_DAY_WEATHER("10일간의 일기예보", R.drawable.round_calendar_month_24),
+    AIR_POLLUTION("대기질", R.drawable.baseline_blur_on_24),
+    VERTICAL_GRID("vertical_grid", 0),
+    REPORT("문제 리포트", 0)
 }
