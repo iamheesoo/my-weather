@@ -86,8 +86,6 @@ fun WeatherInfoScreen(
         derivedStateOf { listState.firstVisibleItemIndex }
     }
 
-    val LAZY_COLUMN_EACH_PADDING = 20.dp
-
     LaunchedEffect(listFirstVisibleItemIndex) {
         customTopAppBarHeight = max(400.dp - (listFirstVisibleItemIndex.times(30.dp)), 100.dp)
     }
@@ -134,15 +132,16 @@ fun WeatherInfoScreen(
                         state = listState,
                         modifier = _modifier,
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         weatherContent(
                             titleIconId = R.drawable.round_access_alarm_24,
                             titleText = "시간별 일기예보",
-                            content = { _modifier ->
+                            content = {
                                 if (weatherHourlyList?.isNotEmpty() == true) {
                                     LazyRow(
-                                        modifier = _modifier,
+                                        contentPadding = PaddingValues(horizontal = 14.dp),
                                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                                     ) {
                                         items(weatherHourlyList.size) { index ->
@@ -160,16 +159,11 @@ fun WeatherInfoScreen(
                             }
                         )
 
-                        item {
-                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
-                        }
-
                         weatherContent(
                             titleIconId = R.drawable.round_calendar_month_24,
                             titleText = "10일간의 일기예보",
-                            content = { _modifier ->
+                            content = {
                                 TodayWeather(
-                                    modifier = _modifier,
                                     icon = context.getWeatherIconDrawable(weather.weatherList?.firstOrNull()?.icon),
                                     tempMin = weather.main?.tempMin?.roundToInt(),
                                     tempMax = weather.main?.tempMax?.roundToInt()
@@ -177,30 +171,18 @@ fun WeatherInfoScreen(
                             }
                         )
 
-
-
-                        item {
-                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
-                        }
-
                         if (airPollution?.list?.firstOrNull() != null) {
                             val item = airPollution.list.first()
                             weatherContent(
                                 titleIconId = R.drawable.baseline_blur_on_24,
                                 titleText = "대기질",
-                                content = { _modifier ->
+                                content = {
                                     AirPollutionContent(
-                                        modifier = _modifier,
                                         aqi = item.main?.aqi ?: 1,
                                         content = getAirQualityInfo(item.main?.aqi)
                                     )
                                 }
                             )
-                        }
-
-
-                        item {
-                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
                         }
 
                         item {
@@ -283,15 +265,7 @@ fun WeatherInfoScreen(
                         }
 
                         item {
-                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
-                        }
-
-                        item {
                             ReportItem()
-                        }
-
-                        item {
-                            Spacer(modifier = Modifier.height(LAZY_COLUMN_EACH_PADDING))
                         }
 
                         item {

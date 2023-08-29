@@ -31,7 +31,7 @@ fun AirPollutionContent(modifier: Modifier = Modifier, aqi: Int, content: String
         mutableStateOf(IntSize.Zero)
     }
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth().padding(horizontal = 14.dp)
     ) {
         Text(
             text = "대기질 Level $aqi (1~5)",

@@ -3,7 +3,7 @@ package com.example.myweather.composable
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,66 +19,43 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.myweather.ui.theme.SubTitle2
-import com.example.myweather.ui.theme.SubTitle3
 
 fun LazyListScope.weatherContent(
     @DrawableRes titleIconId: Int,
     titleText: String,
-    content: @Composable (Modifier) -> Unit
+    content: @Composable () -> Unit
 ) {
     item {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp
-                    ),
+                    shape = RoundedCornerShape(16.dp),
                     color = Color.Black.copy(alpha = 0.3f)
                 )
-                .padding(vertical = 8.dp, horizontal = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+                .padding(vertical = 10.dp),
         ) {
-            Icon(
-                painter = painterResource(id = titleIconId),
-                contentDescription = "titleIcon",
-                modifier = Modifier.size(10.dp),
-                tint = Color.White
-            )
-            Text(
-                modifier = Modifier
-                    .padding(start = 5.dp),
-                text = titleText,
-                color = Color.White,
-                fontSize = SubTitle2.fontSize
-            )
-        }
-    }
-
-    item {
-        content.invoke(
-            Modifier
-                .fillMaxWidth()
-                .background(color = Color.Black.copy(alpha = 0.3f))
-                .padding(horizontal = 14.dp)
-        )
-    }
-
-    item {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    shape = RoundedCornerShape(
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
-                    ),
-                    color = Color.Black.copy(alpha = 0.3f)
+            Row(
+                modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    painter = painterResource(id = titleIconId),
+                    contentDescription = "titleIcon",
+                    modifier = Modifier.size(10.dp),
+                    tint = Color.White
                 )
-                .padding(vertical = 8.dp, horizontal = 14.dp),
-        )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 5.dp),
+                    text = titleText,
+                    color = Color.White,
+                    fontSize = SubTitle2.fontSize
+                )
+            }
+            content.invoke()
+        }
     }
 }
 

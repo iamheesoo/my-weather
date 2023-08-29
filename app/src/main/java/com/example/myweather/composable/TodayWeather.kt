@@ -3,6 +3,7 @@ package com.example.myweather.composable
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -30,7 +31,8 @@ fun TodayWeather(
 ) {
     ConstraintLayout(
         modifier = modifier
-            .padding(horizontal = 8.dp),
+            .fillMaxWidth()
+            .padding(horizontal = 14.dp),
     ) {
         val (today, image, minText, rect, maxText) = createRefs()
         Text(
