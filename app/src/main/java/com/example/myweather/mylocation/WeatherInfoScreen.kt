@@ -86,7 +86,7 @@ fun WeatherInfoScreen(
     }
 
     LaunchedEffect(listFirstVisibleItemIndex) {
-        customTopAppBarHeight = max(400.dp - (listFirstVisibleItemIndex.times(30.dp)), 100.dp)
+        customTopAppBarHeight = max(400.dp - (listFirstVisibleItemIndex.times(100.dp)), 100.dp)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
