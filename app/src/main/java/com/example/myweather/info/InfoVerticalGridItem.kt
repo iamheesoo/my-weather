@@ -1,9 +1,9 @@
-package com.example.myweather.mylocation
+package com.example.myweather.info
 
 import androidx.annotation.DrawableRes
 import com.example.myweather.R
 
-enum class VerticalGridItem(
+enum class InfoVerticalGridItem(
     @DrawableRes
     val icon: Int,
     val title: String,

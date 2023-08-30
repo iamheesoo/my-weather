@@ -1,4 +1,4 @@
-package com.example.myweather.mylocation
+package com.example.myweather.info
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -112,7 +113,10 @@ fun WeatherInfoScreen(
         )
         if (weather == null) {
             viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
-            Text("WeatherInfoContract.Event.RequestWeatherInfo")
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.White
+            )
         } else {
             TransparentColumn(
                 header = { _modifier ->
@@ -201,18 +205,18 @@ fun WeatherInfoScreen(
                             VerticalGrid(
                                 columns = 2
                             ) {
-                                VerticalGridItem.values().forEachIndexed { index, item ->
+                                InfoVerticalGridItem.values().forEachIndexed { index, item ->
                                     VerticalGridContent(
                                         titleIconId = item.icon,
                                         titleText = item.title,
                                         paddingValues = PaddingValues(4.dp)
                                     ) { _modifier ->
                                         when (item) {
-                                            VerticalGridItem.UV -> {
+                                            InfoVerticalGridItem.UV -> {
                                                 Text(modifier = _modifier, text = "testtttt")
                                             }
 
-                                            VerticalGridItem.WIND -> {
+                                            InfoVerticalGridItem.WIND -> {
                                                 WindContent(
                                                     modifier = _modifier,
                                                     speed = weather.wind?.speed ?: 0.0,
@@ -220,7 +224,7 @@ fun WeatherInfoScreen(
                                                 )
                                             }
 
-                                            VerticalGridItem.RAINY -> {
+                                            InfoVerticalGridItem.RAINY -> {
                                                 BigTitleContent(
                                                     modifier = _modifier,
                                                     title = if (weather.rain?.hour1 != null) {
@@ -231,7 +235,7 @@ fun WeatherInfoScreen(
                                                 )
                                             }
 
-                                            VerticalGridItem.TEMPERATURE -> {
+                                            InfoVerticalGridItem.TEMPERATURE -> {
                                                 val feelsLike = weather.main?.feelsLike ?: 0.0
                                                 val temp = weather.main?.temp ?: 0.0
                                                 BigTitleContent(
@@ -245,21 +249,21 @@ fun WeatherInfoScreen(
                                                 )
                                             }
 
-                                            VerticalGridItem.HUMIDITY -> {
+                                            InfoVerticalGridItem.HUMIDITY -> {
                                                 BigTitleContent(
                                                     modifier = _modifier,
                                                     title = "${weather.main?.humidity}%"
                                                 )
                                             }
 
-                                            VerticalGridItem.VISIBILITY -> {
+                                            InfoVerticalGridItem.VISIBILITY -> {
                                                 BigTitleContent(
                                                     modifier = _modifier,
                                                     title = "${(weather.visibility ?: 0) / 1000}km"
                                                 )
                                             }
 
-                                            VerticalGridItem.PRESSURE -> {
+                                            InfoVerticalGridItem.PRESSURE -> {
                                                 PressureContent(
                                                     modifier = _modifier,
                                                     pressure = weather.main?.pressure

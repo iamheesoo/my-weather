@@ -1,11 +1,10 @@
-package com.example.myweather.mylocation
+package com.example.myweather.info
 
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
-import com.example.myweather.domain.WeatherResponse
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers

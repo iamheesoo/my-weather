@@ -3,7 +3,7 @@ package com.example.myweather
 import com.example.myweather.domain.ApiService
 import com.example.myweather.domain.WeatherRepository
 import com.example.myweather.domain.WeatherRepositoryImpl
-import com.example.myweather.mylocation.WeatherInfoViewModel
+import com.example.myweather.info.WeatherInfoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

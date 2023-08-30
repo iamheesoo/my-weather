@@ -1,4 +1,4 @@
-package com.example.myweather.mylocation
+package com.example.myweather.info
 
 import com.example.myweather.base.UiEffect
 import com.example.myweather.base.UiEvent
