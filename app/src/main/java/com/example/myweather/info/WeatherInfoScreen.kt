@@ -56,6 +56,7 @@ import com.example.myweather.composable.VerticalGrid
 import com.example.myweather.composable.VerticalGridContent
 import com.example.myweather.composable.WindContent
 import com.example.myweather.composable.weatherContent
+import com.example.myweather.data.LatAndLong
 import com.example.myweather.ui.theme.Content3
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.utils.buildExoPlayer
@@ -63,17 +64,19 @@ import com.example.myweather.utils.dtTxtToHour
 import com.example.myweather.utils.getAirQualityInfo
 import com.example.myweather.utils.getVideoUri
 import com.example.myweather.utils.getWeatherIconDrawable
+import com.orhanobut.logger.Logger
 import kotlin.math.roundToInt
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun WeatherInfoScreen(
+    location: LatAndLong,
     viewModel: WeatherInfoViewModel
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    val weather = state.value.weather
-    val weatherHourlyList = state.value.weatherHourlyList
-    val airPollution = state.value.airPollution
+    val weather = state.value.hashMap[location]?.weather
+    val weatherHourlyList = state.value.hashMap[location]?.weatherHourlyList
+    val airPollution = state.value.hashMap[location]?.airPollution
 
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -111,13 +114,14 @@ fun WeatherInfoScreen(
             },
             modifier = Modifier.fillMaxSize()
         )
-        if (weather == null) {
+        Logger.d("!!! WeatherInfoScreen if K $location ${state.value.hashMap}")
+        if (!viewModel.isMapContainsLocation(location)) {
             viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = Color.White
             )
-        } else {
+        } else if (weather != null) {
             TransparentColumn(
                 header = { _modifier ->
                     CustomTopAppBar(
@@ -346,6 +350,8 @@ fun WeatherInfoScreen(
                     }
                 }
             )
+        } else {
+            Text("데이터 없음")
         }
 
     }

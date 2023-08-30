@@ -19,24 +19,34 @@ class WeatherInfoViewModel(
     var location: LatAndLong? = null
 
     init {
-        Logger.d("WeatherInfoViewModel location $location")
+
     }
 
+    fun setMyLocation(location: LatAndLong) {
+        if (!isMapContainsLocation(location)) {
+            setState {
+                copy(
+                    hashMap = HashMap(hashMap).apply { put(location, LocationInfo()) }
+                )
+            }
+            this.location = location
+        }
+    }
 
     override fun createState(): WeatherInfoContract.State {
-        Logger.d("createState")
+        Logger.d("!!! createState")
         return WeatherInfoContract.State(
-
+            hashMap = hashMapOf()
         )
     }
 
     override fun initialState() {
-        Logger.d("initialState")
+        Logger.d("!!! initialState")
 
     }
 
     override fun loadData() {
-        Logger.d("loadData")
+        Logger.d("!!! loadData")
 //        location?.let {
 //            requestGetWeather(it)
 //        }
@@ -44,9 +54,10 @@ class WeatherInfoViewModel(
     }
 
     override fun handleEvent(event: WeatherInfoContract.Event) {
-        Logger.d("handleEvent")
+        Logger.d("!!! handleEvent")
         when (event) {
             WeatherInfoContract.Event.RequestWeatherInfo -> {
+                Logger.d("!!! WeatherInfoViewModel RequestWeatherInfo")
                 location?.let { _location ->
                     requestGetWeather(_location)
                     requestGetWeatherHourly(_location)
@@ -60,21 +71,25 @@ class WeatherInfoViewModel(
     }
 
     private fun requestGetWeather(location: LatAndLong) {
-        Logger.d("requestGetWeather")
+        Logger.d("!!! requestGetWeather")
         viewModelScope.launch(Dispatchers.IO) {
             weatherRepository.getWeather(lat = location.latitude, lon = location.longitude)
                 .collectLatest {
                     when (it) {
                         is ApiState.Success -> {
-                            Logger.d("success ${it.data}")
+                            Logger.d("!!! success ${it.data}")
                             setState {
-                                copy(weather = it.data)
+                                copy(
+                                    hashMap = HashMap(hashMap).apply {
+                                        put(location, get(location)?.copy(weather = it.data))
+                                    }
+                                )
                             }
                         }
 
                         is ApiState.Error -> {
                             // todo error 처리
-                            Logger.d("error ${it.data}")
+                            Logger.d("!!! error ${it.data}")
                         }
                     }
                 }
@@ -89,9 +104,13 @@ class WeatherInfoViewModel(
                 .collectLatest {
                     when (it) {
                         is ApiState.Success -> {
-                            Logger.d("success ${it.data}")
+                            Logger.d("!!! success ${it.data}")
                             setState {
-                                copy(weatherHourly = it.data)
+                                copy(
+                                    hashMap = HashMap(hashMap).apply {
+                                        put(location, get(location)?.copy(weatherHourly = it.data))
+                                    }
+                                )
                             }
                             val currentTime = System.currentTimeMillis()
                             val list = it.data?.list
@@ -100,13 +119,17 @@ class WeatherInfoViewModel(
                                 }
                                 ?.take(10)
                             setState {
-                                copy(weatherHourlyList = list)
+                                copy(
+                                    hashMap = HashMap(hashMap).apply {
+                                        put(location, get(location)?.copy(weatherHourlyList = list))
+                                    }
+                                )
                             }
                         }
 
                         is ApiState.Error -> {
                             // todo error 처리
-                            Logger.d("error ${it.data}")
+                            Logger.d("!!! error ${it.data}")
                         }
                     }
                 }
@@ -120,16 +143,27 @@ class WeatherInfoViewModel(
                     when (it) {
                         is ApiState.Success -> {
                             setState {
-                                copy(airPollution = it.data)
+                                copy(
+                                    hashMap = HashMap(hashMap).apply {
+                                        put(location, get(location)?.copy(airPollution = it.data))
+                                    }
+                                )
                             }
                         }
+
                         is ApiState.Error -> {
                             // todo error 처리
-                            Logger.d("error ${it.data}")
+                            Logger.d("!!! error ${it.data}")
                         }
                     }
                 }
         }
+    }
+
+    fun isMapContainsLocation(location: LatAndLong): Boolean {
+        val key =  state.hashMap.keys.find { it.latitude == location.latitude && it.longitude == location.longitude }
+        val value = state.hashMap.get(key)
+        return value?.weather != null
     }
 
 }

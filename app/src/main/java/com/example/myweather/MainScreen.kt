@@ -72,10 +72,10 @@ fun MainScreen(
                             location = LatAndLong(latitude = it.latitude, longitude = it.longitude)
                         )
                     )
-                    Logger.d("location ${it.latitude} ${it.longitude}")
+                    Logger.d("!!! location success ${it.latitude} ${it.longitude}")
                 }
                 .addOnFailureListener {
-                    Logger.d("location fail ${it.message}")
+                    Logger.d("!!! location fail ${it.message}")
                 }
             Box(
                 modifier = Modifier
@@ -83,12 +83,12 @@ fun MainScreen(
                     .fillMaxWidth()
                     .also { Logger.d("!!! Box innerPadding $innerPadding") }
             ) {
-                if (uiState.value.currentLocation != null) {
-                    Text(text = "currentLocation ${uiState.value.currentLocation}")
+//                if (uiState.value.currentLocation != null) {
+//                    Text(text = "currentLocation ${uiState.value.currentLocation}")
                     HorizontalPager(count = 2, state = pagerState) {
                         Column {
                             when (it) {
-                                0 -> {
+                                0, 1 -> {
                                     /*
                                     val weatherInfoViewModel: WeatherInfoViewModel by viewModel {
                                         parametersOf(uiState.value.currentLocation)
@@ -99,22 +99,39 @@ fun MainScreen(
                                             owner = getComposeActivityViewModelOwner(),
                                             parameters = { parametersOf(uiState.value.currentLocation) })
 
-
-                                     */
                                     val weatherInfoViewModel = koinViewModel<WeatherInfoViewModel>().apply {
                                         location = uiState.value.currentLocation!!
                                     }
-                                    Logger.d("weatherInfoVIewModel ${weatherInfoViewModel.location}")
-                                    WeatherInfoScreen(weatherInfoViewModel)
+                                     */
+
+                                    val myLocation = if (currentPage == 0) {
+                                        uiState.value.currentLocation
+                                    } else {
+                                        // newYork
+                                        LatAndLong(40.776676, -73.971321)
+                                    }
+                                    Logger.d("!!! MainScreen currentLocation $myLocation")
+                                    myLocation?.let { _location ->
+                                        val weatherInfoViewModel: WeatherInfoViewModel =
+                                            koinViewModel<WeatherInfoViewModel>().apply {
+                                                setMyLocation(_location)
+                                            }
+                                        Logger.d("!!! MainScreen let ${_location}")
+                                        WeatherInfoScreen(
+                                            location = _location,
+                                            viewModel = weatherInfoViewModel
+                                        )
+                                    }
+
                                 }
 
                                 else -> Text(text = "$it") // todo
                             }
                         }
                     }
-                } else {
-                    Text(text = "currentLocation null") // todo
-                }
+//                } else {
+//                    Text(text = "currentLocation null") // todo
+//                }
 
                 /*
         HorizontalPager(count = 2, state = pagerState) {
