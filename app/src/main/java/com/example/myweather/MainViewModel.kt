@@ -3,8 +3,12 @@ package com.example.myweather
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.WeatherRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel
+    @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) : BaseMviViewModel<MainContract.State, MainContract.Event, MainContract.Effect>() {
     var locationMap: HashMap<Int, LatAndLong> = hashMapOf()

@@ -7,11 +7,15 @@ import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.WeatherRepository
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WeatherInfoViewModel(
+@HiltViewModel
+class WeatherInfoViewModel
+    @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 

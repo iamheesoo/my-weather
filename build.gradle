@@ -3,8 +3,11 @@ buildscript {
 
     ext {
         compose_compiler = '1.4.5'        //compiler
-//        compose_version = '1.0.1'        //stable compose dependencies 1.2.1
-////                compose_material3 = '1.1.1'    //M3 releases
+        hilt_version = '2.38.1'
+        hilt_android_compiler_version = '2.37'
+        hilt_view_model_version = '1.0.0-alpha03'
+        hilt_compiler_version = '1.0.0'
+        hilt_nav_compose_version = '1.0.0'
     }
 }
 

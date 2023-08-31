@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -88,11 +89,6 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation "io.insert-koin:koin-android:3.3.2"
-    implementation "io.insert-koin:koin-androidx-compose:3.4.1"
-
-    def koin_version = '3.3.2'
-    implementation "io.insert-koin:koin-core:$koin_version"
 
     implementation "com.importre:kotlin-unwrap:0.3.2"
 
@@ -124,4 +120,10 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
 
     implementation 'com.google.accompanist:accompanist-insets:0.23.1'
+
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_view_model_version"
 }

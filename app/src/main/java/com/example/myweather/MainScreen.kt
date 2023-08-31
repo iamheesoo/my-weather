@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.extensions.onClick
@@ -34,7 +35,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
-import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("MissingPermission")
 @OptIn(
@@ -115,7 +115,7 @@ fun MainScreen(
                                     Logger.d("!!! MainScreen currentLocation $myLocation")
                                     myLocation?.let { _location ->
                                         val weatherInfoViewModel: WeatherInfoViewModel =
-                                            koinViewModel<WeatherInfoViewModel>().apply {
+                                            hiltViewModel<WeatherInfoViewModel>().apply {
                                                 setMyLocation(_location)
                                             }
                                         Logger.d("!!! MainScreen let ${_location}")

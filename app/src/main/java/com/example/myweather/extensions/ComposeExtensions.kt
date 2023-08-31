@@ -16,17 +16,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
-import org.koin.androidx.viewmodel.ViewModelOwner
 
-@Composable
-fun getComposeActivityViewModelOwner(): ViewModelStoreOwner? {
-    return LocalContext.current.getActivity()?.let { _activity ->
-        ViewModelOwner.from(
-            storeOwner = _activity,
-            stateRegistry = _activity
-        ).storeOwner
-    }
-}
 
 interface MultipleEventsCutterManager {
     fun processEvent(event: () -> Unit)

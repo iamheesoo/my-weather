@@ -1,13 +1,20 @@
 package com.example.myweather.domain
 
 import com.orhanobut.logger.Logger
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 object ApiService {
     private const val WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/"
     private const val GEOCODING_API_URL = "https://api.openweathermap.org/geo/1.0/"
@@ -46,6 +53,11 @@ object ApiService {
             .create(GeocodingApi::class.java)
     }
 
+    @Provides
+    @Singleton
     fun weatherRetrofitCreate(): WeatherApi = weatherRetrofit
+
+    @Provides
+    @Singleton
     fun geocodingRetrofitCreate(): GeocodingApi = geocodingRetrofit
 }

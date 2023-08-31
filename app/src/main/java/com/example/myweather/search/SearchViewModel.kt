@@ -6,13 +6,17 @@ import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.GeocodingRepository
 import com.orhanobut.logger.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(private val geocodingRepository: GeocodingRepository) :
+@HiltViewModel
+class SearchViewModel
+    @Inject constructor(private val geocodingRepository: GeocodingRepository) :
     BaseMviViewModel<SearchContract.State, SearchContract.Event, SearchContract.Effect>() {
     override fun createState(): SearchContract.State {
         return SearchContract.State(
