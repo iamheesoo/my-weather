@@ -32,12 +32,13 @@ import com.example.myweather.R
 import com.example.myweather.composable.GeocodingItem
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.ui.theme.SubTitle1
+import com.example.myweather.ui.theme.SubTitle3
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun SearchScreen() {
-    val viewModel = hiltViewModel<SearchViewModel>()//koinViewModel<SearchViewModel>()
+    val viewModel = hiltViewModel<SearchViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val searchTextField = state.value.searchTextField
     val geocodingList = state.value.geocodingList
@@ -134,6 +135,14 @@ fun SearchScreen() {
             item {
                 CircularProgressIndicator(
                     color = Color.White
+                )
+            }
+        } else {
+            item {
+                Text(
+                    text = "데이터 없음",
+                    color = PrimaryTextColor,
+                    style = SubTitle3
                 )
             }
         }

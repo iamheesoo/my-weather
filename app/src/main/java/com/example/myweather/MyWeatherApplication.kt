@@ -11,10 +11,6 @@ import dagger.hilt.android.HiltAndroidApp
 class MyWeatherApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-//        startKoin {
-//            androidContext(this@MyWeatherApplication)
-//            modules(appModule + viewModelModule + apiModule)
-//        }
 
         val formatStrategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
             .showThreadInfo(true)
@@ -23,10 +19,6 @@ class MyWeatherApplication : Application() {
             .tag("MY_WEATHER_LOGGER")
             .build()
 
-        Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-//            override fun isLoggable(priority: Int, tag: String?): Boolean {
-//                return BuildConfig.DEBUG
-//            }
-        })
+        Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {})
     }
 }

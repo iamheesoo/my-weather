@@ -17,7 +17,7 @@ import com.example.myweather.ui.theme.PrimaryTextColor
 @Composable
 fun BigTitleContent(
     modifier: Modifier = Modifier,
-    title: String?,
+    title: String? = null,
     content: String? = null
 ) {
     Box(

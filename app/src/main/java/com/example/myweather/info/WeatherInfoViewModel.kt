@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.ApiState
-import com.example.myweather.domain.WeatherRepository
+import com.example.myweather.repository.WeatherRepository
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,17 +14,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WeatherInfoViewModel
-    @Inject constructor(
+class WeatherInfoViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
-
     var location: LatAndLong? = null
-
-    init {
-
-    }
 
     fun setMyLocation(location: LatAndLong) {
         if (!isMapContainsLocation(location)) {
@@ -38,50 +32,35 @@ class WeatherInfoViewModel
     }
 
     override fun createState(): WeatherInfoContract.State {
-        Logger.d("!!! createState")
         return WeatherInfoContract.State(
             hashMap = hashMapOf()
         )
     }
 
     override fun initialState() {
-        Logger.d("!!! initialState")
-
     }
 
     override fun loadData() {
-        Logger.d("!!! loadData")
-//        location?.let {
-//            requestGetWeather(it)
-//        }
-
     }
 
     override fun handleEvent(event: WeatherInfoContract.Event) {
-        Logger.d("!!! handleEvent")
         when (event) {
             WeatherInfoContract.Event.RequestWeatherInfo -> {
-                Logger.d("!!! WeatherInfoViewModel RequestWeatherInfo")
                 location?.let { _location ->
                     requestGetWeather(_location)
                     requestGetWeatherHourly(_location)
                     requestGetAirPollution(_location)
-//                    setState { copy(weather = WeatherResponse()) }
                 }
             }
-
-            else -> {}
         }
     }
 
     private fun requestGetWeather(location: LatAndLong) {
-        Logger.d("!!! requestGetWeather")
         viewModelScope.launch(Dispatchers.IO) {
             weatherRepository.getWeather(lat = location.latitude, lon = location.longitude)
                 .collectLatest {
                     when (it) {
                         is ApiState.Success -> {
-                            Logger.d("!!! success ${it.data}")
                             setState {
                                 copy(
                                     hashMap = HashMap(hashMap).apply {
@@ -108,7 +87,6 @@ class WeatherInfoViewModel
                 .collectLatest {
                     when (it) {
                         is ApiState.Success -> {
-                            Logger.d("!!! success ${it.data}")
                             setState {
                                 copy(
                                     hashMap = HashMap(hashMap).apply {
@@ -169,5 +147,4 @@ class WeatherInfoViewModel
         val value = state.hashMap.get(key)
         return value?.weather != null
     }
-
 }

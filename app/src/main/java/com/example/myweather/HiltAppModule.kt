@@ -1,11 +1,11 @@
 package com.example.myweather
 
 import com.example.myweather.domain.GeocodingApi
-import com.example.myweather.domain.GeocodingRepository
-import com.example.myweather.domain.GeocodingRepositoryImpl
 import com.example.myweather.domain.WeatherApi
-import com.example.myweather.domain.WeatherRepository
-import com.example.myweather.domain.WeatherRepositoryImpl
+import com.example.myweather.repository.GeocodingRepository
+import com.example.myweather.repository.GeocodingRepositoryImpl
+import com.example.myweather.repository.WeatherRepository
+import com.example.myweather.repository.WeatherRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

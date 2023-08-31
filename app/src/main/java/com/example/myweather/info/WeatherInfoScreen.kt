@@ -114,9 +114,8 @@ fun WeatherInfoScreen(
             },
             modifier = Modifier.fillMaxSize()
         )
-        Logger.d("!!! WeatherInfoScreen if K $location ${state.value.hashMap}")
         if (!viewModel.isMapContainsLocation(location)) {
-//            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo) FIXME
+            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = Color.White
@@ -209,17 +208,13 @@ fun WeatherInfoScreen(
                             VerticalGrid(
                                 columns = 2
                             ) {
-                                InfoVerticalGridItem.values().forEachIndexed { index, item ->
+                                InfoVerticalGridItem.values().forEach { item ->
                                     VerticalGridContent(
                                         titleIconId = item.icon,
                                         titleText = item.title,
                                         paddingValues = PaddingValues(4.dp)
                                     ) { _modifier ->
                                         when (item) {
-                                            InfoVerticalGridItem.UV -> {
-                                                Text(modifier = _modifier, text = "testtttt")
-                                            }
-
                                             InfoVerticalGridItem.WIND -> {
                                                 WindContent(
                                                     modifier = _modifier,
@@ -275,7 +270,9 @@ fun WeatherInfoScreen(
                                             }
 
                                             else -> {
-                                                Text(modifier = _modifier, text = "testtttt2")
+                                                BigTitleContent(
+                                                    modifier = _modifier
+                                                )
                                             }
                                         }
                                     }

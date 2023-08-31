@@ -62,10 +62,6 @@ fun MainScreen(
         }
     ) { innerPadding ->
         if (permissionList.allPermissionsGranted) {
-            /**
-             * 현재 위치와 SharedPreference에 저장된 위치 리스트를 가져온다
-             *
-             */
             val client = LocationServices.getFusedLocationProviderClient(LocalContext.current)
             client.lastLocation
                 .addOnSuccessListener {
@@ -74,7 +70,6 @@ fun MainScreen(
                             location = LatAndLong(latitude = it.latitude, longitude = it.longitude)
                         )
                     )
-                    Logger.d("!!! location success ${it.latitude} ${it.longitude}")
                 }
                 .addOnFailureListener {
                     Logger.d("!!! location fail ${it.message}")
@@ -83,82 +78,34 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxWidth()
-                    .also { Logger.d("!!! Box innerPadding $innerPadding") }
             ) {
-//                if (uiState.value.currentLocation != null) {
-//                    Text(text = "currentLocation ${uiState.value.currentLocation}")
-                    HorizontalPager(count = 2, state = pagerState) {
-                        Column {
-                            when (it) {
-                                0, 1 -> {
-                                    /*
-                                    val weatherInfoViewModel: WeatherInfoViewModel by viewModel {
-                                        parametersOf(uiState.value.currentLocation)
-                                    }
-
-                                    val weatherInfoViewModel: WeatherInfoViewModel =
-                                        getViewModel<WeatherInfoViewModel>(
-                                            owner = getComposeActivityViewModelOwner(),
-                                            parameters = { parametersOf(uiState.value.currentLocation) })
-
-                                    val weatherInfoViewModel = koinViewModel<WeatherInfoViewModel>().apply {
-                                        location = uiState.value.currentLocation!!
-                                    }
-                                     */
-
-                                    val myLocation = if (currentPage == 0) {
-                                        uiState.value.currentLocation
-                                    } else {
-                                        // newYork
-                                        LatAndLong(40.776676, -73.971321)
-                                    }
-                                    Logger.d("!!! MainScreen currentLocation $myLocation")
-                                    myLocation?.let { _location ->
-                                        val weatherInfoViewModel: WeatherInfoViewModel =
-                                            hiltViewModel<WeatherInfoViewModel>().apply {
-                                                setMyLocation(_location)
-                                            }
-                                        Logger.d("!!! MainScreen let ${_location}")
-                                        WeatherInfoScreen(
-                                            location = _location,
-                                            viewModel = weatherInfoViewModel
-                                        )
-                                    }
-
+                HorizontalPager(count = 2, state = pagerState) {
+                    Column {
+                        when (it) {
+                            0, 1 -> {
+                                val myLocation = if (currentPage == 0) {
+                                    uiState.value.currentLocation
+                                } else {
+                                    // newYork
+                                    LatAndLong(40.776676, -73.971321)
+                                }
+                                myLocation?.let { _location ->
+                                    val weatherInfoViewModel =
+                                        hiltViewModel<WeatherInfoViewModel>().apply {
+                                            setMyLocation(_location)
+                                        }
+                                    WeatherInfoScreen(
+                                        location = _location,
+                                        viewModel = weatherInfoViewModel
+                                    )
                                 }
 
-                                else -> Text(text = "$it") // todo
                             }
+
+                            else -> Text(text = "$it") // todo
                         }
                     }
-//                } else {
-//                    Text(text = "currentLocation null") // todo
-//                }
-
-                /*
-        HorizontalPager(count = 2, state = pagerState) {
-            Column {
-
-
-                when (it) {
-                    0 -> {
-                        val viewModel: WeatherInfoViewModel by viewModel {
-                            parametersOf(viewModel.)
-                        }
-                        WeatherInfoScreen(viewModel)
-                    }
-
-                    else -> Text(text = "$it") // todo
                 }
-                if (it == 0) {
-                    Logger.d("it==0 ${uiState.value.weather?.weather?.firstOrNull()?.main}")
-                    Text(
-                        text = uiState.value.weather?.weather?.firstOrNull()?.main ?: "no!"
-                    )
-                }
-                    }
-                }
-                 */
             }
         } else {
             permissionList.launchMultiplePermissionRequest()

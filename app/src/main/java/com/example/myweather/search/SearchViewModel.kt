@@ -4,7 +4,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.domain.ApiState
-import com.example.myweather.domain.GeocodingRepository
+import com.example.myweather.repository.GeocodingRepository
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

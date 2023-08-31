@@ -1,5 +1,9 @@
-package com.example.myweather.domain
+package com.example.myweather.repository
 
+import com.example.myweather.domain.AirPollutionResponse
+import com.example.myweather.domain.ApiState
+import com.example.myweather.domain.WeatherHourlyResponse
+import com.example.myweather.domain.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {

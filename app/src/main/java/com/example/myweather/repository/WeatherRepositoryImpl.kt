@@ -1,6 +1,12 @@
-package com.example.myweather.domain
+package com.example.myweather.repository
 
 import com.example.myweather.BuildConfig
+import com.example.myweather.domain.AirPollutionResponse
+import com.example.myweather.domain.ApiState
+import com.example.myweather.domain.WeatherApi
+import com.example.myweather.domain.WeatherHourlyResponse
+import com.example.myweather.domain.WeatherResponse
+import com.example.myweather.domain.apiCallSerialize
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
