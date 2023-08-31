@@ -116,7 +116,7 @@ fun WeatherInfoScreen(
         )
         Logger.d("!!! WeatherInfoScreen if K $location ${state.value.hashMap}")
         if (!viewModel.isMapContainsLocation(location)) {
-            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
+//            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo) FIXME
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = Color.White

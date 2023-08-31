@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myweather.data.LatAndLong
+import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
 import com.example.myweather.info.WeatherInfoViewModel
 import com.example.myweather.ui.theme.Azure
@@ -42,7 +43,8 @@ import org.koin.androidx.compose.koinViewModel
 )
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    onListClick: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState()
@@ -56,7 +58,7 @@ fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            BottomBar(pagerState = pagerState)
+            BottomBar(pagerState = pagerState, onListClick = onListClick)
         }
     ) { innerPadding ->
         if (permissionList.allPermissionsGranted) {
@@ -167,7 +169,7 @@ fun MainScreen(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun BottomBar(pagerState: PagerState) {
+fun BottomBar(pagerState: PagerState, onListClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,6 +190,7 @@ fun BottomBar(pagerState: PagerState) {
             painter = painterResource(id = R.drawable.baseline_format_list_bulleted_24),
             contentDescription = "list",
             modifier = Modifier
+                .onClick { onListClick.invoke() }
                 .size(24.dp)
                 .align(Alignment.CenterEnd),
             tint = Color.White
