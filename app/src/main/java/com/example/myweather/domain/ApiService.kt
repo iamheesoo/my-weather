@@ -9,7 +9,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object ApiService {
-    private const val API_URL = "https://api.openweathermap.org/data/2.5/"
+    private const val WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/"
+    private const val GEOCODING_API_URL = "https://api.openweathermap.org/geo/1.0/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(
@@ -25,9 +26,9 @@ object ApiService {
             ).setLevel(HttpLoggingInterceptor.Level.BODY)
         ).build()
 
-    private val client: WeatherApi by lazy {
+    private val weatherRetrofit: WeatherApi by lazy {
         Retrofit.Builder()
-            .baseUrl(API_URL)
+            .baseUrl(WEATHER_API_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
@@ -35,5 +36,16 @@ object ApiService {
             .create(WeatherApi::class.java)
     }
 
-    fun create(): WeatherApi = client
+    private val geocodingRetrofit: GeocodingApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(GEOCODING_API_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(GeocodingApi::class.java)
+    }
+
+    fun weatherRetrofitCreate(): WeatherApi = weatherRetrofit
+    fun geocodingRetrofitCreate(): GeocodingApi = geocodingRetrofit
 }
