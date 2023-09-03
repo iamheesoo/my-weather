@@ -9,6 +9,10 @@ buildscript {
         hilt_compiler_version = '1.0.0'
         hilt_nav_compose_version = '1.0.0'
     }
+
+    dependencies {
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+    }
 }
 
 plugins {
