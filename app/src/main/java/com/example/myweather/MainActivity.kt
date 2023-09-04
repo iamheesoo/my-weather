@@ -28,7 +28,11 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(Navigation.SEARCH.name) {
-                        SearchScreen()
+                        SearchScreen(
+                            onPopBackStack = {
+                                navController.popBackStack()
+                            }
+                        )
                     }
                 }
             }

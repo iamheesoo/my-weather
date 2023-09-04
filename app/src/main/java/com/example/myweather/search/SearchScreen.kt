@@ -1,5 +1,6 @@
 package com.example.myweather.search
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,11 +33,11 @@ import com.example.myweather.composable.GeocodingItem
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.ui.theme.SubTitle1
 import com.example.myweather.ui.theme.SubTitle3
+import com.orhanobut.logger.Logger
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-@Preview
-fun SearchScreen() {
+fun SearchScreen(onPopBackStack: () -> Unit) {
     val viewModel = hiltViewModel<SearchViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val searchTextField = state.value.searchTextField
@@ -45,6 +45,11 @@ fun SearchScreen() {
     val isLoading = state.value.isLoading
 
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    BackHandler(enabled = true) {
+        Logger.d("!!! SearchScreen BackHandler")
+        onPopBackStack.invoke()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -125,6 +130,7 @@ fun SearchScreen() {
                     lat = geocodingList[index].lat ?: 0.0,
                     lon = geocodingList[index].lon ?: 0.0,
                     onItemClick = {
+                        Logger.d("!!!onItemClick")
                         viewModel.sendEvent(
                             SearchContract.Event.ClickOnGeocoding(geocodingList[index])
                         )

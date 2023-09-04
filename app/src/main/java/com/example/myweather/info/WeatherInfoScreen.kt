@@ -2,6 +2,7 @@ package com.example.myweather.info
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

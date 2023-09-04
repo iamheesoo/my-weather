@@ -2,8 +2,6 @@ package com.example.myweather.domain
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.JsonTransformingSerializer
 
 @Serializable
 data class GeocodingData(

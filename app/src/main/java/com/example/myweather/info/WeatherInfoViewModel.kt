@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.domain.ApiState
+import com.example.myweather.repository.LocationRepository
 import com.example.myweather.repository.WeatherRepository
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
@@ -32,15 +33,23 @@ class WeatherInfoViewModel @Inject constructor(
     }
 
     override fun createState(): WeatherInfoContract.State {
+        Logger.d("!!! createState")
         return WeatherInfoContract.State(
             hashMap = hashMapOf()
         )
     }
 
     override fun initialState() {
+        Logger.d("!!! initialState")
+
     }
 
     override fun loadData() {
+        Logger.d("!!! loadData")
+//        location?.let {
+//            requestGetWeather(it)
+//        }
+
     }
 
     override fun handleEvent(event: WeatherInfoContract.Event) {

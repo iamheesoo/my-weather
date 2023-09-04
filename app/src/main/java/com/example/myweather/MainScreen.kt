@@ -2,6 +2,7 @@ package com.example.myweather
 
 import android.Manifest
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,8 @@ fun MainScreen(
     onListClick: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val locationList = uiState.value.locationList
+
     val pagerState = rememberPagerState()
     val permissionList = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -81,28 +84,30 @@ fun MainScreen(
             ) {
                 HorizontalPager(count = 2, state = pagerState) {
                     Column {
-                        when (it) {
-                            0, 1 -> {
-                                val myLocation = if (currentPage == 0) {
-                                    uiState.value.currentLocation
-                                } else {
-                                    // newYork
-                                    LatAndLong(40.776676, -73.971321)
-                                }
-                                myLocation?.let { _location ->
-                                    val weatherInfoViewModel =
-                                        hiltViewModel<WeatherInfoViewModel>().apply {
-                                            setMyLocation(_location)
-                                        }
-                                    WeatherInfoScreen(
-                                        location = _location,
-                                        viewModel = weatherInfoViewModel
-                                    )
-                                }
-
+                        val myLocation = if (currentPage == 0) {
+                            uiState.value.currentLocation
+                        } else {
+                            locationList?.getOrNull(currentPage - 1)?.let { data ->
+                                LatAndLong(
+                                    latitude = data.latitude,
+                                    longitude = data.longitude
+                                )
+                            } ?: run {
+                                // newYork
+                                LatAndLong(40.776676, -73.971321)
                             }
-
-                            else -> Text(text = "$it") // todo
+                        }
+                        Logger.d("!!! MainScreen currentLocation $myLocation")
+                        myLocation?.let { _location ->
+                            val weatherInfoViewModel: WeatherInfoViewModel =
+                                hiltViewModel<WeatherInfoViewModel>().apply {
+                                    setMyLocation(_location)
+                                }
+                            Logger.d("!!! MainScreen let ${_location}")
+                            WeatherInfoScreen(
+                                location = _location,
+                                viewModel = weatherInfoViewModel
+                            )
                         }
                     }
                 }

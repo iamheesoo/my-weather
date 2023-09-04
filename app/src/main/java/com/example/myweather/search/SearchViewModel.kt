@@ -3,8 +3,12 @@ package com.example.myweather.search
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
+import com.example.myweather.database.LocationDao
+import com.example.myweather.database.LocationEntity
 import com.example.myweather.domain.ApiState
+import com.example.myweather.domain.GeocodingData
 import com.example.myweather.repository.GeocodingRepository
+import com.example.myweather.repository.LocationRepository
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +19,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel
-    @Inject constructor(private val geocodingRepository: GeocodingRepository) :
+class SearchViewModel @Inject constructor(
+    private val geocodingRepository: GeocodingRepository,
+    private val locationRepository: LocationRepository
+) :
     BaseMviViewModel<SearchContract.State, SearchContract.Event, SearchContract.Effect>() {
     override fun createState(): SearchContract.State {
         return SearchContract.State(
@@ -43,7 +49,7 @@ class SearchViewModel
                 requestGetGeocoding()
             }
             is SearchContract.Event.ClickOnGeocoding -> {
-                // TODO sharedpref에 저장
+                addLocation(event.data)
             }
         }
     }
@@ -81,4 +87,23 @@ class SearchViewModel
                 }
         }
     }
+
+    private fun addLocation(data: GeocodingData) {
+        Logger.d("!!! addLocation")
+        viewModelScope.launch(Dispatchers.IO) {
+            locationRepository.addLocationData(
+                data.toLocationEntity()
+            ).collectLatest {
+                Logger.d("!!! addLocation isSuccess $it")
+            }
+        }
+    }
+
+    private fun GeocodingData.toLocationEntity() =
+        LocationEntity(
+            latitude = lat ?: 0.0,
+            longitude = lon ?: 0.0,
+            name = name ?: ""
+        )
+
 }
