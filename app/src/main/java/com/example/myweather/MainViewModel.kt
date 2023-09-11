@@ -2,9 +2,7 @@ package com.example.myweather
 
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
-import com.example.myweather.data.LatAndLong
 import com.example.myweather.repository.LocationRepository
-import com.example.myweather.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -13,10 +11,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository,
     private val locationRepository: LocationRepository
 ) : BaseMviViewModel<MainContract.State, MainContract.Event, MainContract.Effect>() {
-    var locationMap: HashMap<Int, LatAndLong> = hashMapOf()
+
+    private var isBackHandler = false
+
+
+    init {
+        getLocationList()
+    }
 
 
     override fun createState(): MainContract.State {
@@ -40,6 +43,7 @@ class MainViewModel @Inject constructor(
             }
 
             is MainContract.Event.BackHandler -> {
+                isBackHandler = true
                 getLocationList()
             }
         }
@@ -51,6 +55,12 @@ class MainViewModel @Inject constructor(
                 .collectLatest {
                     setState {
                         copy(locationList = it)
+                    }
+                    if (isBackHandler) {
+                        sendEffect {
+                            MainContract.Effect.GoToLastPage
+                        }
+                        isBackHandler = false
                     }
                 }
         }

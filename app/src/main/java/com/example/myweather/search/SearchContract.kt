@@ -10,7 +10,8 @@ class SearchContract {
     data class State(
         val searchTextField: TextFieldValue,
         val geocodingList: List<GeocodingData>?,
-        val isLoading: Boolean
+        val isLoading: Boolean,
+        val isAdded: Boolean,
     ) : UiState
 
     sealed class Event : UiEvent {
@@ -23,5 +24,9 @@ class SearchContract {
         ): Event()
     }
 
-    object Effect : UiEffect
+    sealed class Effect : UiEffect {
+        data class ShowToast(
+            val text: String
+        ): Effect()
+    }
 }

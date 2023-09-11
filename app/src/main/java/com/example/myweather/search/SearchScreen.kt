@@ -1,5 +1,6 @@
 package com.example.myweather.search
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,11 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -34,10 +37,13 @@ import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.ui.theme.SubTitle1
 import com.example.myweather.ui.theme.SubTitle3
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchScreen(onPopBackStack: () -> Unit) {
+fun SearchScreen(onPopBackStack: (Boolean) -> Unit) {
+    val context = LocalContext.current
     val viewModel = hiltViewModel<SearchViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val searchTextField = state.value.searchTextField
@@ -47,8 +53,17 @@ fun SearchScreen(onPopBackStack: () -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     BackHandler(enabled = true) {
-        Logger.d("!!! SearchScreen BackHandler")
-        onPopBackStack.invoke()
+        onPopBackStack.invoke(state.value.isAdded)
+    }
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.onEach { _effect ->
+            when (_effect) {
+                is SearchContract.Effect.ShowToast -> {
+                    Toast.makeText(context, _effect.text, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.collect()
     }
 
     LazyColumn(

@@ -3,7 +3,6 @@ package com.example.myweather.search
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
-import com.example.myweather.database.LocationDao
 import com.example.myweather.database.LocationEntity
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.GeocodingData
@@ -28,7 +27,8 @@ class SearchViewModel @Inject constructor(
         return SearchContract.State(
             searchTextField = TextFieldValue(),
             geocodingList = null,
-            isLoading = false
+            isLoading = false,
+            isAdded = false
         )
     }
 
@@ -89,12 +89,16 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun addLocation(data: GeocodingData) {
-        Logger.d("!!! addLocation")
         viewModelScope.launch(Dispatchers.IO) {
             locationRepository.addLocationData(
                 data.toLocationEntity()
             ).collectLatest {
-                Logger.d("!!! addLocation isSuccess $it")
+                setState {
+                    copy(isAdded = it)
+                }
+                sendEffect {
+                    SearchContract.Effect.ShowToast("도시가 추가되었습니다.")
+                }
             }
         }
     }

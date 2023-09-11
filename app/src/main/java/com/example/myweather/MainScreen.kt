@@ -2,7 +2,6 @@ package com.example.myweather
 
 import android.Manifest
 import android.annotation.SuppressLint
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
@@ -36,6 +36,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 
 @SuppressLint("MissingPermission")
 @OptIn(
@@ -45,7 +47,8 @@ import com.orhanobut.logger.Logger
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
-    onListClick: () -> Unit
+    onListClick: () -> Unit,
+    navController: NavController
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val locationList = uiState.value.locationList
@@ -58,6 +61,32 @@ fun MainScreen(
         ),
         onPermissionsResult = {}
     )
+
+    val isAdded =
+        navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(
+            NavigationKey.IS_ADDED,
+            false
+        )
+            ?.collectAsStateWithLifecycle()
+    LaunchedEffect(
+        isAdded?.value != null
+    ) {
+        if (isAdded?.value == true) {
+            viewModel.sendEvent(
+                MainContract.Event.BackHandler
+            )
+        }
+    }
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.onEach { _effect ->
+            when (_effect) {
+                is MainContract.Effect.GoToLastPage -> {
+                    pagerState.scrollToPage(pagerState.pageCount - 1)
+                }
+            }
+        }.collect()
+    }
 
     Scaffold(
         bottomBar = {
@@ -82,7 +111,7 @@ fun MainScreen(
                     .padding(innerPadding)
                     .fillMaxWidth()
             ) {
-                HorizontalPager(count = 2, state = pagerState) {
+                HorizontalPager(count = (locationList?.size ?: 0) + 1, state = pagerState) {
                     Column {
                         val myLocation = if (currentPage == 0) {
                             uiState.value.currentLocation
@@ -164,13 +193,15 @@ fun PagerIndicator(modifier: Modifier, pagerState: PagerState) {
             modifier = Modifier.size(20.dp),
             tint = if (pagerState.currentPage == 0) Color.White else Color.LightGray
         )
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_circle_24),
-            contentDescription = "circle",
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .size(14.dp),
-            tint = if (pagerState.currentPage == 1) Color.White else Color.LightGray
-        )
+        repeat(pagerState.pageCount - 1) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_circle_24),
+                contentDescription = "circle",
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(14.dp),
+                tint = if (pagerState.currentPage - 1 == it) Color.White else Color.LightGray
+            )
+        }
     }
 }

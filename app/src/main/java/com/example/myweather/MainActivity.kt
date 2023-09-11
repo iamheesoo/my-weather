@@ -24,12 +24,17 @@ class MainActivity : ComponentActivity() {
                             viewModel = hiltViewModel(),
                             onListClick = {
                                 navController.navigate(Navigation.SEARCH.name)
-                            }
+                            },
+                            navController = navController
                         )
                     }
                     composable(Navigation.SEARCH.name) {
                         SearchScreen(
-                            onPopBackStack = {
+                            onPopBackStack = { isAdded ->
+                                navController.previousBackStackEntry?.savedStateHandle?.set(
+                                    NavigationKey.IS_ADDED,
+                                    isAdded
+                                )
                                 navController.popBackStack()
                             }
                         )

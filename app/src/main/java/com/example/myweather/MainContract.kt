@@ -6,7 +6,6 @@ import com.example.myweather.base.UiState
 import com.example.myweather.data.LatAndLong
 import com.example.myweather.database.LocationEntity
 import com.example.myweather.domain.WeatherResponse
-import com.example.myweather.info.WeatherInfoContract
 
 class MainContract {
     data class State(
@@ -24,6 +23,6 @@ class MainContract {
     }
 
     sealed class Effect: UiEffect {
-
+        object GoToLastPage: Effect()
     }
 }
