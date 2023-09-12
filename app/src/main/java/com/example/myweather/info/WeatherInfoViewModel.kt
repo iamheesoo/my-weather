@@ -65,52 +65,50 @@ class WeatherInfoViewModel @Inject constructor(
 
     private fun requestMultipleApi(location: LatAndLong) {
         viewModelScope.launch(Dispatchers.IO) {
-            kotlin.runCatching {
-                val weatherTask = async {
-                    weatherRepository.getWeather(
-                        lat = location.latitude,
-                        lon = location.longitude
-                    )
-                }
-                val weatherHourlyTask = async {
-                    weatherRepository.getWeatherHourly(
-                        lat = location.latitude,
-                        lon = location.longitude
-                    )
-                }
-                val airPollutionTask = async {
-                    weatherRepository.getAirPollution(
-                        lat = location.latitude,
-                        lon = location.longitude
-                    )
-                }
+            val weatherTask = async {
+                weatherRepository.getWeather(
+                    lat = location.latitude,
+                    lon = location.longitude
+                )
+            }
+            val weatherHourlyTask = async {
+                weatherRepository.getWeatherHourly(
+                    lat = location.latitude,
+                    lon = location.longitude
+                )
+            }
+            val airPollutionTask = async {
+                weatherRepository.getAirPollution(
+                    lat = location.latitude,
+                    lon = location.longitude
+                )
+            }
 
-                combine(
-                    weatherTask.await(),
-                    weatherHourlyTask.await(),
-                    airPollutionTask.await()
-                ) { weatherResponse, weatherHourlyResponse, airPollutionResponse ->
-                    LocationInfo(
-                        weather = weatherResponse.data,
-                        weatherHourly = weatherHourlyResponse.data,
-                        weatherHourlyList = weatherHourlyResponse.data?.list
-                            ?.filter {
-                                val currentTime = System.currentTimeMillis()
-                                (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
-                            }
-                            ?.take(10),
-                        airPollution = airPollutionResponse.data
-                    ).also {
-                        Logger.d("!!! requestMultipleApi LocationInfo $it")
-                    }
-                }.collectLatest { _locationInfo ->
-                    setState {
-                        copy(
-                            hashMap = HashMap(hashMap).apply {
-                                put(location, _locationInfo)
-                            }
-                        )
-                    }
+            combine(
+                weatherTask.await(),
+                weatherHourlyTask.await(),
+                airPollutionTask.await()
+            ) { weatherResponse, weatherHourlyResponse, airPollutionResponse ->
+                val currentTime = System.currentTimeMillis()
+                LocationInfo(
+                    weather = weatherResponse.data,
+                    weatherHourly = weatherHourlyResponse.data,
+                    weatherHourlyList = weatherHourlyResponse.data?.list
+                        ?.filter {
+                            (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
+                        }
+                        ?.take(10),
+                    airPollution = airPollutionResponse.data
+                ).also {
+                    Logger.d("!!! requestMultipleApi LocationInfo $it")
+                }
+            }.collectLatest { _locationInfo ->
+                setState {
+                    copy(
+                        hashMap = HashMap(hashMap).apply {
+                            put(location, _locationInfo)
+                        }
+                    )
                 }
             }
         }
