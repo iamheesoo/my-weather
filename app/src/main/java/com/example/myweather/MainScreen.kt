@@ -2,6 +2,7 @@ package com.example.myweather
 
 import android.Manifest
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -28,10 +32,6 @@ import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
 import com.example.myweather.info.WeatherInfoViewModel
 import com.example.myweather.ui.theme.Azure
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
@@ -41,8 +41,7 @@ import kotlinx.coroutines.flow.onEach
 
 @SuppressLint("MissingPermission")
 @OptIn(
-    ExperimentalPagerApi::class,
-    ExperimentalPermissionsApi::class
+    ExperimentalPermissionsApi::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun MainScreen(
@@ -53,7 +52,13 @@ fun MainScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val locationList = uiState.value.locationList
 
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        // provide pageCount
+        (locationList?.size ?: 0) + 1
+    }
     val permissionList = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -111,7 +116,7 @@ fun MainScreen(
                     .padding(innerPadding)
                     .fillMaxWidth()
             ) {
-                HorizontalPager(count = (locationList?.size ?: 0) + 1, state = pagerState) {
+                HorizontalPager(state = pagerState) { currentPage ->
                     Column {
                         val myLocation = if (currentPage == 0) {
                             uiState.value.currentLocation
@@ -148,7 +153,7 @@ fun MainScreen(
 }
 
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomBar(pagerState: PagerState, onListClick: () -> Unit) {
     Box(
@@ -180,7 +185,7 @@ fun BottomBar(pagerState: PagerState, onListClick: () -> Unit) {
 
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PagerIndicator(modifier: Modifier, pagerState: PagerState) {
     Row(
