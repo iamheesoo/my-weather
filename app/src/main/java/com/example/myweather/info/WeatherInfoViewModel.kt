@@ -3,14 +3,14 @@ package com.example.myweather.info
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
 import com.example.myweather.data.LatAndLong
-import com.example.myweather.domain.ApiState
-import com.example.myweather.repository.LocationRepository
 import com.example.myweather.repository.WeatherRepository
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +20,7 @@ class WeatherInfoViewModel @Inject constructor(
 ) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
     var location: LatAndLong? = null
+    private val locationInfo = LocationInfo()
 
     fun setMyLocation(location: LatAndLong) {
         if (!isMapContainsLocation(location)) {
@@ -56,103 +57,68 @@ class WeatherInfoViewModel @Inject constructor(
         when (event) {
             WeatherInfoContract.Event.RequestWeatherInfo -> {
                 location?.let { _location ->
-                    requestGetWeather(_location)
-                    requestGetWeatherHourly(_location)
-                    requestGetAirPollution(_location)
+                    requestMultipleApi(_location)
                 }
             }
         }
     }
 
-    private fun requestGetWeather(location: LatAndLong) {
+    private fun requestMultipleApi(location: LatAndLong) {
         viewModelScope.launch(Dispatchers.IO) {
-            weatherRepository.getWeather(lat = location.latitude, lon = location.longitude)
-                .collectLatest {
-                    when (it) {
-                        is ApiState.Success -> {
-                            setState {
-                                copy(
-                                    hashMap = HashMap(hashMap).apply {
-                                        put(location, get(location)?.copy(weather = it.data))
-                                    }
-                                )
-                            }
-                        }
-
-                        is ApiState.Error -> {
-                            // todo error 처리
-                            Logger.d("!!! error ${it.data}")
-                        }
-                    }
+            kotlin.runCatching {
+                val weatherTask = async {
+                    weatherRepository.getWeather(
+                        lat = location.latitude,
+                        lon = location.longitude
+                    )
+                }
+                val weatherHourlyTask = async {
+                    weatherRepository.getWeatherHourly(
+                        lat = location.latitude,
+                        lon = location.longitude
+                    )
+                }
+                val airPollutionTask = async {
+                    weatherRepository.getAirPollution(
+                        lat = location.latitude,
+                        lon = location.longitude
+                    )
                 }
 
-
-        }
-    }
-
-    private fun requestGetWeatherHourly(location: LatAndLong) {
-        viewModelScope.launch(Dispatchers.IO) {
-            weatherRepository.getWeatherHourly(lat = location.latitude, lon = location.longitude)
-                .collectLatest {
-                    when (it) {
-                        is ApiState.Success -> {
-                            setState {
-                                copy(
-                                    hashMap = HashMap(hashMap).apply {
-                                        put(location, get(location)?.copy(weatherHourly = it.data))
-                                    }
-                                )
+                combine(
+                    weatherTask.await(),
+                    weatherHourlyTask.await(),
+                    airPollutionTask.await()
+                ) { weatherResponse, weatherHourlyResponse, airPollutionResponse ->
+                    LocationInfo(
+                        weather = weatherResponse.data,
+                        weatherHourly = weatherHourlyResponse.data,
+                        weatherHourlyList = weatherHourlyResponse.data?.list
+                            ?.filter {
+                                val currentTime = System.currentTimeMillis()
+                                (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
                             }
-                            val currentTime = System.currentTimeMillis()
-                            val list = it.data?.list
-                                ?.filter {
-                                    (it.dtTxt?.dtTxtToLong() ?: 0L) >= currentTime
-                                }
-                                ?.take(10)
-                            setState {
-                                copy(
-                                    hashMap = HashMap(hashMap).apply {
-                                        put(location, get(location)?.copy(weatherHourlyList = list))
-                                    }
-                                )
+                            ?.take(10),
+                        airPollution = airPollutionResponse.data
+                    ).also {
+                        Logger.d("!!! requestMultipleApi LocationInfo $it")
+                    }
+                }.collectLatest { _locationInfo ->
+                    setState {
+                        copy(
+                            hashMap = HashMap(hashMap).apply {
+                                put(location, _locationInfo)
                             }
-                        }
-
-                        is ApiState.Error -> {
-                            // todo error 처리
-                            Logger.d("!!! error ${it.data}")
-                        }
+                        )
                     }
                 }
-        }
-    }
-
-    private fun requestGetAirPollution(location: LatAndLong) {
-        viewModelScope.launch(Dispatchers.IO) {
-            weatherRepository.getAirPollution(lat = location.latitude, lon = location.longitude)
-                .collectLatest {
-                    when (it) {
-                        is ApiState.Success -> {
-                            setState {
-                                copy(
-                                    hashMap = HashMap(hashMap).apply {
-                                        put(location, get(location)?.copy(airPollution = it.data))
-                                    }
-                                )
-                            }
-                        }
-
-                        is ApiState.Error -> {
-                            // todo error 처리
-                            Logger.d("!!! error ${it.data}")
-                        }
-                    }
-                }
+            }
         }
     }
 
     fun isMapContainsLocation(location: LatAndLong): Boolean {
-        val key =  state.hashMap.keys.find { it.latitude == location.latitude && it.longitude == location.longitude }
+        val key =
+            state.hashMap.keys.find { it.latitude == location.latitude && it.longitude == location.longitude }
         val value = state.hashMap.get(key)
         return value?.weather != null
     }
