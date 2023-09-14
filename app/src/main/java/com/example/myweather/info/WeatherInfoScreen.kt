@@ -2,7 +2,6 @@ package com.example.myweather.info
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +56,7 @@ import com.example.myweather.composable.VerticalGrid
 import com.example.myweather.composable.VerticalGridContent
 import com.example.myweather.composable.WindContent
 import com.example.myweather.composable.weatherContent
-import com.example.myweather.data.LatAndLong
+import com.example.myweather.data.LatAndLon
 import com.example.myweather.ui.theme.Content3
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.utils.buildExoPlayer
@@ -65,13 +64,12 @@ import com.example.myweather.utils.dtTxtToHour
 import com.example.myweather.utils.getAirQualityInfo
 import com.example.myweather.utils.getVideoUri
 import com.example.myweather.utils.getWeatherIconDrawable
-import com.orhanobut.logger.Logger
 import kotlin.math.roundToInt
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun WeatherInfoScreen(
-    location: LatAndLong,
+    location: LatAndLon,
     viewModel: WeatherInfoViewModel
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()

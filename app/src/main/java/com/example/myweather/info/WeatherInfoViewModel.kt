@@ -2,7 +2,9 @@ package com.example.myweather.info
 
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
-import com.example.myweather.data.LatAndLong
+import com.example.myweather.data.LatAndLon
+import com.example.myweather.database.LocationEntity
+import com.example.myweather.repository.LocationRepository
 import com.example.myweather.repository.WeatherRepository
 import com.example.myweather.utils.dtTxtToLong
 import com.orhanobut.logger.Logger
@@ -13,16 +15,18 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class WeatherInfoViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val locationRepository: LocationRepository
 ) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
-    var location: LatAndLong? = null
+    var location: LatAndLon? = null
     private val locationInfo = LocationInfo()
 
-    fun setMyLocation(location: LatAndLong) {
+    fun setMyLocation(location: LatAndLon) {
         if (!isMapContainsLocation(location)) {
             setState {
                 copy(
@@ -63,7 +67,7 @@ class WeatherInfoViewModel @Inject constructor(
         }
     }
 
-    private fun requestMultipleApi(location: LatAndLong) {
+    private fun requestMultipleApi(location: LatAndLon) {
         viewModelScope.launch(Dispatchers.IO) {
             val weatherTask = async {
                 weatherRepository.getWeather(
@@ -99,10 +103,15 @@ class WeatherInfoViewModel @Inject constructor(
                         }
                         ?.take(10),
                     airPollution = airPollutionResponse.data
-                ).also {
-                    Logger.d("!!! requestMultipleApi LocationInfo $it")
-                }
+                )
             }.collectLatest { _locationInfo ->
+                /**
+                 * db에 온도 등 날씨 정보 갱신
+                 */
+                locationRepository.insertOrUpdate(_locationInfo.toLocationEntity())
+                    .collectLatest { isSuccess ->
+                        Logger.d("!!! WeatherInfoViewModel UPDATE $isSuccess")
+                    }
                 setState {
                     copy(
                         hashMap = HashMap(hashMap).apply {
@@ -114,10 +123,22 @@ class WeatherInfoViewModel @Inject constructor(
         }
     }
 
-    fun isMapContainsLocation(location: LatAndLong): Boolean {
+    fun isMapContainsLocation(location: LatAndLon): Boolean {
         val key =
             state.hashMap.keys.find { it.latitude == location.latitude && it.longitude == location.longitude }
         val value = state.hashMap.get(key)
         return value?.weather != null
     }
+
+    private fun LocationInfo.toLocationEntity() = LocationEntity(
+        latAndLon = LatAndLon(
+            latitude = this.weather?.coord?.lat ?: 0.0,
+            longitude = this.weather?.coord?.lon ?: 0.0
+        ),
+        name = this.weather?.name ?: "",
+        temp = this.weather?.main?.temp?.roundToInt() ?: 0,
+        tempMax = this.weather?.main?.tempMax?.roundToInt() ?: 0,
+        tempMin = this.weather?.main?.tempMin?.roundToInt() ?: 0,
+        weatherInfo = this.weather?.weatherList?.firstOrNull()?.description ?: ""
+    )
 }

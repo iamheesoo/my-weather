@@ -3,6 +3,7 @@ package com.example.myweather.search
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.base.BaseMviViewModel
+import com.example.myweather.data.LatAndLon
 import com.example.myweather.database.LocationEntity
 import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.GeocodingData
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.floor
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -45,9 +47,11 @@ class SearchViewModel @Inject constructor(
                     copy(searchTextField = event.text)
                 }
             }
+
             is SearchContract.Event.ClickOnSearch -> {
                 requestGetGeocoding()
             }
+
             is SearchContract.Event.ClickOnGeocoding -> {
                 addLocation(event.data)
             }
@@ -105,8 +109,10 @@ class SearchViewModel @Inject constructor(
 
     private fun GeocodingData.toLocationEntity() =
         LocationEntity(
-            latitude = lat ?: 0.0,
-            longitude = lon ?: 0.0,
+            latAndLon = LatAndLon(
+                latitude = floor(((lat ?: 0.0)) * 10000) / 10000,
+                longitude = floor(((lon ?: 0.0)) * 10000) / 10000
+            ),
             name = name ?: ""
         )
 

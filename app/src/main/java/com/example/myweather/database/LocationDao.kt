@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
+import com.example.myweather.data.LatAndLon
 
 @Dao
 interface LocationDao {
@@ -13,6 +15,9 @@ interface LocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertLocationData(data: LocationEntity): Long
 
-    @Query("DELETE FROM location_table where id=:id")
-    fun deleteLocationData(id: Int): Int
+    @Query("DELETE FROM location_table where latAndLon=:latAndLon")
+    fun deleteLocationData(latAndLon: LatAndLon): Int
+
+    @Update
+    fun updateLocationData(data: LocationEntity): Int
 }

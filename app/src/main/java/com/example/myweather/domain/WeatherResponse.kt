@@ -1,9 +1,12 @@
 package com.example.myweather.domain
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Parcelize
 data class WeatherResponse(
     @SerialName("coord")
     val coord: CoordData? = null,
@@ -35,17 +38,19 @@ data class WeatherResponse(
     val name: String? = null,
     @SerialName("cod")
     val cod: Int? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class CoordData(
     @SerialName("lat")
     val lat: Double? = null,
     @SerialName("lon")
     val lon: Double? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class WeatherData(
     @SerialName("id")
     val id: Int? = null,
@@ -55,9 +60,10 @@ data class WeatherData(
     val description: String? = null,
     @SerialName("icon")
     val icon: String? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class MainData(
     @SerialName("temp")
     val temp: Double? = null,
@@ -75,9 +81,10 @@ data class MainData(
     val seaLevel: Int? = null,
     @SerialName("grnd_level")
     val grndLevel: Int? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class WindData(
     @SerialName("speed")
     val speed:Double? = null,
@@ -85,23 +92,26 @@ data class WindData(
     val deg: Int? = null,
     @SerialName("gust")
     val gust: Double? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class CloudsData(
     @SerialName("all")
     val all: Int? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class VolumeData(
     @SerialName("1h")
     val hour1: Double? = null,
     @SerialName("3h")
     val hour3: Double? = null
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class SysData(
     @SerialName("type")
     val type: Int? = null,
@@ -115,4 +125,4 @@ data class SysData(
     val sunset: Long? = null,
     @SerialName("pod")
     val pod: String? = null, // d: day, n: night
-)
+) : Parcelable

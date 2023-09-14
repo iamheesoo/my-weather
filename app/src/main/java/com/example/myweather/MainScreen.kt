@@ -27,7 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.myweather.data.LatAndLong
+import com.example.myweather.data.LatAndLon
+import com.example.myweather.domain.WeatherResponse
 import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
 import com.example.myweather.info.WeatherInfoViewModel
@@ -46,7 +47,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
-    onListClick: () -> Unit,
+    onListClick: (List<WeatherResponse>) -> Unit,
     navController: NavController
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,7 +58,7 @@ fun MainScreen(
         initialPageOffsetFraction = 0f
     ) {
         // provide pageCount
-        (locationList?.size ?: 0) + 1
+        locationList?.size ?: 0
     }
     val permissionList = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -95,7 +96,7 @@ fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            BottomBar(pagerState = pagerState, onListClick = onListClick)
+            BottomBar(pagerState = pagerState, onListClick = { onListClick.invoke(emptyList()) })
         }
     ) { innerPadding ->
         if (permissionList.allPermissionsGranted) {
@@ -104,7 +105,7 @@ fun MainScreen(
                 .addOnSuccessListener {
                     viewModel.sendEvent(
                         MainContract.Event.UpdateCurrentLocation(
-                            location = LatAndLong(latitude = it.latitude, longitude = it.longitude)
+                            location = LatAndLon(latitude = it.latitude, longitude = it.longitude)
                         )
                     )
                 }
@@ -118,19 +119,7 @@ fun MainScreen(
             ) {
                 HorizontalPager(state = pagerState) { currentPage ->
                     Column {
-                        val myLocation = if (currentPage == 0) {
-                            uiState.value.currentLocation
-                        } else {
-                            locationList?.getOrNull(currentPage - 1)?.let { data ->
-                                LatAndLong(
-                                    latitude = data.latitude,
-                                    longitude = data.longitude
-                                )
-                            } ?: run {
-                                // newYork
-                                LatAndLong(40.776676, -73.971321)
-                            }
-                        }
+                        val myLocation = locationList?.getOrNull(currentPage)?.latAndLon ?: uiState.value.currentLocation
                         Logger.d("!!! MainScreen currentLocation $myLocation")
                         myLocation?.let { _location ->
                             val weatherInfoViewModel: WeatherInfoViewModel =
