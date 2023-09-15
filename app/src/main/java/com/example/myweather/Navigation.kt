@@ -7,5 +7,5 @@ enum class Navigation {
 
 object NavigationKey {
     const val IS_ADDED = "IS_ADDED"
-    const val WEATHER_LIST = "WEATHER_LIST"
+    const val LOCATION_LIST = "LOCATION_LIST"
 }

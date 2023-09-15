@@ -31,8 +31,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.myweather.NavigationKey
 import com.example.myweather.R
 import com.example.myweather.composable.GeocodingItem
+import com.example.myweather.composable.LocationItem
+import com.example.myweather.database.LocationEntity
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.ui.theme.SubTitle1
 import com.example.myweather.ui.theme.SubTitle3
@@ -42,7 +46,7 @@ import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchScreen(onPopBackStack: (Boolean) -> Unit) {
+fun SearchScreen(onPopBackStack: (Boolean) -> Unit, navController: NavController) {
     val context = LocalContext.current
     val viewModel = hiltViewModel<SearchViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
@@ -51,6 +55,11 @@ fun SearchScreen(onPopBackStack: (Boolean) -> Unit) {
     val isLoading = state.value.isLoading
 
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val locationList = navController.previousBackStackEntry?.savedStateHandle?.getStateFlow(
+        NavigationKey.LOCATION_LIST,
+        emptyList<LocationEntity>()
+    )?.collectAsStateWithLifecycle()?.value
 
     BackHandler(enabled = true) {
         onPopBackStack.invoke(state.value.isAdded)
@@ -156,6 +165,13 @@ fun SearchScreen(onPopBackStack: (Boolean) -> Unit) {
             item {
                 CircularProgressIndicator(
                     color = Color.White
+                )
+            }
+        } else if (locationList?.isNotEmpty() == true) {
+            items(locationList.size) { index ->
+                LocationItem(
+                    locationEntity = locationList[index],
+                    isCurrentLocation = index == 0
                 )
             }
         } else {

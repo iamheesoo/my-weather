@@ -28,7 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.myweather.data.LatAndLon
-import com.example.myweather.domain.WeatherResponse
+import com.example.myweather.database.LocationEntity
 import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
 import com.example.myweather.info.WeatherInfoViewModel
@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
-    onListClick: (List<WeatherResponse>) -> Unit,
+    onListClick: (List<LocationEntity>) -> Unit,
     navController: NavController
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -96,7 +96,9 @@ fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            BottomBar(pagerState = pagerState, onListClick = { onListClick.invoke(emptyList()) })
+            BottomBar(
+                pagerState = pagerState,
+                onListClick = { onListClick.invoke(locationList ?: emptyList()) })
         }
     ) { innerPadding ->
         if (permissionList.allPermissionsGranted) {
@@ -119,7 +121,8 @@ fun MainScreen(
             ) {
                 HorizontalPager(state = pagerState) { currentPage ->
                     Column {
-                        val myLocation = locationList?.getOrNull(currentPage)?.latAndLon ?: uiState.value.currentLocation
+                        val myLocation = locationList?.getOrNull(currentPage)?.latAndLon
+                            ?: uiState.value.currentLocation
                         Logger.d("!!! MainScreen currentLocation $myLocation")
                         myLocation?.let { _location ->
                             val weatherInfoViewModel: WeatherInfoViewModel =

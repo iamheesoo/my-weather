@@ -22,7 +22,11 @@ class MainActivity : ComponentActivity() {
                     composable(Navigation.MAIN.name) {
                         MainScreen(
                             viewModel = hiltViewModel(),
-                            onListClick = {
+                            onListClick = { _locationList ->
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    NavigationKey.LOCATION_LIST,
+                                    _locationList
+                                )
                                 navController.navigate(Navigation.SEARCH.name)
                             },
                             navController = navController
@@ -36,7 +40,8 @@ class MainActivity : ComponentActivity() {
                                     isAdded
                                 )
                                 navController.popBackStack()
-                            }
+                            },
+                            navController = navController
                         )
                     }
                 }
