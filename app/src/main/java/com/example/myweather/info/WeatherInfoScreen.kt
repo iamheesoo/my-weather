@@ -92,6 +92,10 @@ fun WeatherInfoScreen(
         customTopAppBarHeight = max(400.dp - (listFirstVisibleItemIndex.times(100.dp)), 100.dp)
     }
 
+    LaunchedEffect(location) {
+        viewModel.sendEvent(WeatherInfoContract.Event.UpdateMyLocation(location))
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         DisposableEffect(Unit) {
             onDispose {

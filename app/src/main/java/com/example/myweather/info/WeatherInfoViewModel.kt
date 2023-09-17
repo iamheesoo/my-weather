@@ -24,9 +24,9 @@ class WeatherInfoViewModel @Inject constructor(
 ) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
     var location: LatAndLon? = null
-    private val locationInfo = LocationInfo()
+    private set
 
-    fun setMyLocation(location: LatAndLon) {
+    private fun setLocation(location: LatAndLon) {
         if (!isMapContainsLocation(location)) {
             setState {
                 copy(
@@ -59,10 +59,13 @@ class WeatherInfoViewModel @Inject constructor(
 
     override fun handleEvent(event: WeatherInfoContract.Event) {
         when (event) {
-            WeatherInfoContract.Event.RequestWeatherInfo -> {
+            is WeatherInfoContract.Event.RequestWeatherInfo -> {
                 location?.let { _location ->
                     requestMultipleApi(_location)
                 }
+            }
+            is WeatherInfoContract.Event.UpdateMyLocation -> {
+                setLocation(event.latAndLon)
             }
         }
     }
@@ -139,6 +142,7 @@ class WeatherInfoViewModel @Inject constructor(
         temp = this.weather?.main?.temp?.roundToInt() ?: 0,
         tempMax = this.weather?.main?.tempMax?.roundToInt() ?: 0,
         tempMin = this.weather?.main?.tempMin?.roundToInt() ?: 0,
-        weatherInfo = this.weather?.weatherList?.firstOrNull()?.description ?: ""
+        weatherInfo = this.weather?.weatherList?.firstOrNull()?.description ?: "",
+        timezone = this.weather?.timezone ?: 0L
     )
 }

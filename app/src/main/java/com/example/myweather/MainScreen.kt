@@ -5,8 +5,8 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +31,6 @@ import com.example.myweather.data.LatAndLon
 import com.example.myweather.database.LocationEntity
 import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
-import com.example.myweather.info.WeatherInfoViewModel
 import com.example.myweather.ui.theme.Azure
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -51,14 +50,14 @@ fun MainScreen(
     navController: NavController
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val locationList = uiState.value.locationList
+    val locationList =uiState.value.locationList
+    val currentLocation = uiState.value.currentLocation
 
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
     ) {
-        // provide pageCount
-        locationList?.size ?: 0
+        if (locationList?.isNotEmpty() == true) locationList.size else 1
     }
     val permissionList = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -117,24 +116,17 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxWidth()
+                    .fillMaxSize()
             ) {
-                HorizontalPager(state = pagerState) { currentPage ->
-                    Column {
-                        val myLocation = locationList?.getOrNull(currentPage)?.latAndLon
-                            ?: uiState.value.currentLocation
-                        Logger.d("!!! MainScreen currentLocation $myLocation")
-                        myLocation?.let { _location ->
-                            val weatherInfoViewModel: WeatherInfoViewModel =
-                                hiltViewModel<WeatherInfoViewModel>().apply {
-                                    setMyLocation(_location)
-                                }
-                            Logger.d("!!! MainScreen let ${_location}")
-                            WeatherInfoScreen(
-                                location = _location,
-                                viewModel = weatherInfoViewModel
-                            )
-                        }
+                HorizontalPager(
+                    state = pagerState,
+                ) { currentPage ->
+                    (locationList?.getOrNull(currentPage)?.latAndLon
+                        ?: currentLocation)?.let { _pageLocation ->
+                        WeatherInfoScreen(
+                            location = _pageLocation,
+                            viewModel = hiltViewModel()
+                        )
                     }
                 }
             }

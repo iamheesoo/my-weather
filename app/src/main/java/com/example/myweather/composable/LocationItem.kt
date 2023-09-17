@@ -18,6 +18,7 @@ import com.example.myweather.ui.theme.Content2
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.ui.theme.SubTitle1
 import com.example.myweather.ui.theme.TopAppBarTitle
+import com.example.myweather.utils.getCurrentTime
 
 @Composable
 fun LocationItem(
@@ -40,7 +41,7 @@ fun LocationItem(
                 style = SubTitle1
             )
             Text(
-                text = if (isCurrentLocation) locationEntity.name else "time",
+                text = if (isCurrentLocation) locationEntity.name else locationEntity.timezone.getCurrentTime(),
                 color = PrimaryTextColor,
                 style = Content2
             )

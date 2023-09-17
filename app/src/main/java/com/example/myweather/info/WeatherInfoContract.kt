@@ -17,6 +17,9 @@ class WeatherInfoContract {
 
     sealed class Event: UiEvent {
         object RequestWeatherInfo: Event()
+        data class UpdateMyLocation(
+            val latAndLon: LatAndLon
+        ): Event()
     }
 
     sealed class Effect: UiEffect

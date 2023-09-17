@@ -16,7 +16,6 @@ class MainViewModel @Inject constructor(
 
     private var isBackHandler = false
 
-
     init {
         getLocationList()
     }
@@ -37,8 +36,10 @@ class MainViewModel @Inject constructor(
     override fun handleEvent(event: MainContract.Event) {
         when (event) {
             is MainContract.Event.UpdateCurrentLocation -> {
-                setState {
-                    copy(currentLocation = event.location)
+                if (state.currentLocation == null) {
+                    setState {
+                        copy(currentLocation = event.location)
+                    }
                 }
             }
 
