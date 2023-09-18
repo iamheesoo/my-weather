@@ -143,6 +143,8 @@ class WeatherInfoViewModel @Inject constructor(
         tempMax = this.weather?.main?.tempMax?.roundToInt() ?: 0,
         tempMin = this.weather?.main?.tempMin?.roundToInt() ?: 0,
         weatherInfo = this.weather?.weatherList?.firstOrNull()?.description ?: "",
-        timezone = this.weather?.timezone ?: 0L
+        timezone = this.weather?.timezone ?: 0L,
+        sunrise = this.weather?.sys?.sunrise ?: 0L,
+        sunset = this.weather?.sys?.sunset ?: 0L
     )
 }

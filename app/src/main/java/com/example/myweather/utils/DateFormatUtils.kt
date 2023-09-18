@@ -1,13 +1,13 @@
 package com.example.myweather.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.orhanobut.logger.Logger
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalTime
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZoneOffset
+import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 
@@ -41,16 +41,25 @@ fun Long.getUTCtoKST(): String {
 
 fun Long.getCurrentTime(): String {
     val pattern = "HH:mm"
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val nowUTC = OffsetDateTime.now(ZoneOffset.UTC)
-        val later = nowUTC.plusSeconds(this)
-        later.format(DateTimeFormatter.ofPattern(pattern))
-    } else {
-        val calendar = Calendar.getInstance().apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-            add(Calendar.HOUR, this@getCurrentTime.toInt())
-        }
-        val sdf = SimpleDateFormat(pattern)
-        sdf.format(calendar.time)
-    }
+    val nowUTC = OffsetDateTime.now(ZoneOffset.UTC)
+    val later = nowUTC.plusSeconds(this)
+    return later.format(DateTimeFormatter.ofPattern(pattern))
+}
+
+fun convertUnixTimestampToUTC(timestamp: Long): String {
+    val instant = Instant.ofEpochSecond(timestamp)
+    val timezone = ZoneId.of("UTC")
+    val localDateTime = instant.atZone(ZoneId.of(timezone.id)).toLocalDateTime()
+
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    return localDateTime.format(formatter)
+}
+
+fun compareTimes(time1: String, time2: String): Int {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val localTime1 = LocalTime.parse(time1, formatter)
+    val localTime2 = LocalTime.parse(time2, formatter)
+
+    // 크기 비교
+    return localTime1.compareTo(localTime2)
 }

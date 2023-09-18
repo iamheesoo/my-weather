@@ -42,3 +42,8 @@ val Content4 = TextStyle(
     fontWeight = FontWeight.Normal,
     fontSize = 10.sp
 )
+
+val PlaceHolder = TextStyle(
+    fontWeight = FontWeight.Normal,
+    fontSize = 14.sp
+)

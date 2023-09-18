@@ -1,6 +1,7 @@
 package com.example.myweather
 
 import android.app.Application
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
@@ -20,5 +21,7 @@ class MyWeatherApplication : Application() {
             .build()
 
         Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {})
+
+        AndroidThreeTen.init(this)
     }
 }

@@ -4,12 +4,14 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -37,6 +39,7 @@ import com.example.myweather.R
 import com.example.myweather.composable.GeocodingItem
 import com.example.myweather.composable.LocationItem
 import com.example.myweather.database.LocationEntity
+import com.example.myweather.ui.theme.PlaceHolder
 import com.example.myweather.ui.theme.PrimaryTextColor
 import com.example.myweather.ui.theme.SubTitle1
 import com.example.myweather.ui.theme.SubTitle3
@@ -85,11 +88,13 @@ fun SearchScreen(onPopBackStack: (Boolean) -> Unit, navController: NavController
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(top = 5.dp)
             ) {
                 Image(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(30.dp)
+                        .border(width = 2.dp, color = Color.White, shape = CircleShape)
+                        .padding(3.dp)
                         .align(Alignment.TopEnd),
                     painter = painterResource(id = R.drawable.round_more_horiz_24),
                     contentDescription = null,
@@ -114,16 +119,17 @@ fun SearchScreen(onPopBackStack: (Boolean) -> Unit, navController: NavController
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(top = 5.dp, bottom = 10.dp),
                 shape = RoundedCornerShape(8.dp),
                 leadingIcon = {
                     Image(
                         painter = painterResource(id = R.drawable.round_search_24),
-                        contentDescription = null
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color.LightGray)
                     )
                 },
                 placeholder = {
-                    Text("도시 검색", color = Color.LightGray)
+                    Text("도시 검색", color = Color.LightGray, style = PlaceHolder)
                 },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.DarkGray,

@@ -13,5 +13,7 @@ data class LocationEntity(
     val tempMax: Int = 0,
     val tempMin: Int = 0,
     val weatherInfo: String = "",
-    val timezone: Long = 0L
+    val timezone: Long = 0L,
+    val sunset: Long = 0L,
+    val sunrise: Long = 0L
 )
