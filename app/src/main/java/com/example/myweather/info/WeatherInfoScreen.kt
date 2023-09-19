@@ -43,6 +43,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.example.myweather.MainContract
+import com.example.myweather.MainViewModel
 import com.example.myweather.R
 import com.example.myweather.composable.AirPollutionContent
 import com.example.myweather.composable.BigTitleContent
@@ -64,13 +66,16 @@ import com.example.myweather.utils.dtTxtToHour
 import com.example.myweather.utils.getAirQualityInfo
 import com.example.myweather.utils.getVideoUri
 import com.example.myweather.utils.getWeatherIconDrawable
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlin.math.roundToInt
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun WeatherInfoScreen(
     location: LatAndLon,
-    viewModel: WeatherInfoViewModel
+    viewModel: WeatherInfoViewModel,
+    mainViewModel: MainViewModel
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val weather = state.value.hashMap[location]?.weather
@@ -94,6 +99,16 @@ fun WeatherInfoScreen(
 
     LaunchedEffect(location) {
         viewModel.sendEvent(WeatherInfoContract.Event.UpdateMyLocation(location))
+    }
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.onEach { _effect ->
+            when(_effect) {
+                WeatherInfoContract.Effect.UpdateLocationList -> {
+                    mainViewModel.sendEvent(MainContract.Event.UpdateLocationList)
+                }
+            }
+        }.collect()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

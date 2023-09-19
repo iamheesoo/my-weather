@@ -40,10 +40,11 @@ class MainViewModel @Inject constructor(
                     setState {
                         copy(currentLocation = event.location)
                     }
+                    getLocationList()
                 }
             }
 
-            is MainContract.Event.BackHandler -> {
+            is MainContract.Event.UpdateLocationList -> {
                 isBackHandler = true
                 getLocationList()
             }

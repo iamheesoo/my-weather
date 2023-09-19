@@ -113,7 +113,11 @@ class WeatherInfoViewModel @Inject constructor(
                  */
                 locationRepository.insertOrUpdate(_locationInfo.toLocationEntity())
                     .collectLatest { isSuccess ->
-                        Logger.d("!!! WeatherInfoViewModel UPDATE $isSuccess")
+                        if (isSuccess) {
+                            sendEffect {
+                                WeatherInfoContract.Effect.UpdateLocationList
+                            }
+                        }
                     }
                 setState {
                     copy(

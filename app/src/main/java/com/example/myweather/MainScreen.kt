@@ -31,11 +31,14 @@ import com.example.myweather.data.LatAndLon
 import com.example.myweather.database.LocationEntity
 import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
+import com.example.myweather.info.WeatherInfoViewModel
 import com.example.myweather.ui.theme.Azure
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
@@ -77,9 +80,7 @@ fun MainScreen(
         isAdded?.value != null
     ) {
         if (isAdded?.value == true) {
-            viewModel.sendEvent(
-                MainContract.Event.BackHandler
-            )
+            viewModel.sendEvent(MainContract.Event.UpdateLocationList)
         }
     }
 
@@ -87,7 +88,10 @@ fun MainScreen(
         viewModel.effect.onEach { _effect ->
             when (_effect) {
                 is MainContract.Effect.GoToLastPage -> {
-                    pagerState.scrollToPage(pagerState.pageCount - 1)
+                    coroutineScope {
+                        delay(500L)
+                        pagerState.scrollToPage(pagerState.pageCount - 1)
+                    }
                 }
             }
         }.collect()
@@ -125,7 +129,8 @@ fun MainScreen(
                         ?: currentLocation)?.let { _pageLocation ->
                         WeatherInfoScreen(
                             location = _pageLocation,
-                            viewModel = hiltViewModel()
+                            viewModel = hiltViewModel<WeatherInfoViewModel>(),
+                            mainViewModel = hiltViewModel<MainViewModel>()
                         )
                     }
                 }

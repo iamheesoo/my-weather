@@ -22,7 +22,9 @@ class WeatherInfoContract {
         ): Event()
     }
 
-    sealed class Effect: UiEffect
+    sealed class Effect: UiEffect {
+        object UpdateLocationList: Effect()
+    }
 }
 
 data class LocationInfo(

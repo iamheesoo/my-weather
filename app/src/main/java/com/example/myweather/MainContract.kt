@@ -19,7 +19,7 @@ class MainContract {
             val location: LatAndLon
         ): Event()
 
-        object BackHandler: Event()
+        object UpdateLocationList: Event()
     }
 
     sealed class Effect: UiEffect {
