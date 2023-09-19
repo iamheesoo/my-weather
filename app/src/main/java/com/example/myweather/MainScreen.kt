@@ -33,6 +33,7 @@ import com.example.myweather.extensions.onClick
 import com.example.myweather.info.WeatherInfoScreen
 import com.example.myweather.info.WeatherInfoViewModel
 import com.example.myweather.ui.theme.Azure
+import com.example.myweather.utils.floorUnder4
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
@@ -53,7 +54,7 @@ fun MainScreen(
     navController: NavController
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val locationList =uiState.value.locationList
+    val locationList = uiState.value.locationList
     val currentLocation = uiState.value.currentLocation
 
     val pagerState = rememberPagerState(
@@ -110,7 +111,10 @@ fun MainScreen(
                 .addOnSuccessListener {
                     viewModel.sendEvent(
                         MainContract.Event.UpdateCurrentLocation(
-                            location = LatAndLon(latitude = it.latitude, longitude = it.longitude)
+                            location = LatAndLon(
+                                latitude = it.latitude.floorUnder4(),
+                                longitude = it.longitude.floorUnder4()
+                            )
                         )
                     )
                 }

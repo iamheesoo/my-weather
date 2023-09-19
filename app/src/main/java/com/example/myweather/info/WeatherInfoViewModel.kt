@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -24,7 +26,7 @@ class WeatherInfoViewModel @Inject constructor(
 ) : BaseMviViewModel<WeatherInfoContract.State, WeatherInfoContract.Event, WeatherInfoContract.Effect>() {
 
     var location: LatAndLon? = null
-    private set
+        private set
 
     private fun setLocation(location: LatAndLon) {
         if (!isMapContainsLocation(location)) {
@@ -40,7 +42,8 @@ class WeatherInfoViewModel @Inject constructor(
     override fun createState(): WeatherInfoContract.State {
         Logger.d("!!! createState")
         return WeatherInfoContract.State(
-            hashMap = hashMapOf()
+            hashMap = hashMapOf(),
+            isLoading = false
         )
     }
 
@@ -64,6 +67,7 @@ class WeatherInfoViewModel @Inject constructor(
                     requestMultipleApi(_location)
                 }
             }
+
             is WeatherInfoContract.Event.UpdateMyLocation -> {
                 setLocation(event.latAndLon)
             }
@@ -107,32 +111,34 @@ class WeatherInfoViewModel @Inject constructor(
                         ?.take(10),
                     airPollution = airPollutionResponse.data
                 )
-            }.collectLatest { _locationInfo ->
-                /**
-                 * db에 온도 등 날씨 정보 갱신
-                 */
-                locationRepository.insertOrUpdate(_locationInfo.toLocationEntity())
-                    .collectLatest { isSuccess ->
-                        if (isSuccess) {
-                            sendEffect {
-                                WeatherInfoContract.Effect.UpdateLocationList
+            }
+                .onStart { setState { copy(isLoading = true) } }
+                .collectLatest { _locationInfo ->
+                    /**
+                     * db에 온도 등 날씨 정보 갱신
+                     */
+                    locationRepository.insertOrUpdate(_locationInfo.toLocationEntity())
+                        .onCompletion { setState { copy(isLoading = false) } }
+                        .collectLatest { isSuccess ->
+                            if (isSuccess) {
+                                sendEffect {
+                                    WeatherInfoContract.Effect.UpdateLocationList
+                                }
                             }
                         }
+                    setState {
+                        copy(
+                            hashMap = HashMap(hashMap).apply {
+                                put(location, _locationInfo)
+                            }
+                        )
                     }
-                setState {
-                    copy(
-                        hashMap = HashMap(hashMap).apply {
-                            put(location, _locationInfo)
-                        }
-                    )
                 }
-            }
         }
     }
 
     fun isMapContainsLocation(location: LatAndLon): Boolean {
-        val key =
-            state.hashMap.keys.find { it.latitude == location.latitude && it.longitude == location.longitude }
+        val key = state.hashMap.keys.find { it == location }
         val value = state.hashMap.get(key)
         return value?.weather != null
     }

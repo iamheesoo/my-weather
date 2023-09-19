@@ -12,7 +12,8 @@ import com.example.myweather.domain.WeatherResponse
 class WeatherInfoContract {
 
     data class State(
-        val hashMap: HashMap<LatAndLon, LocationInfo>
+        val hashMap: HashMap<LatAndLon, LocationInfo>,
+        val isLoading: Boolean
     ): UiState
 
     sealed class Event: UiEvent {

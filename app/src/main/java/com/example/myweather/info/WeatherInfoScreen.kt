@@ -81,6 +81,7 @@ fun WeatherInfoScreen(
     val weather = state.value.hashMap[location]?.weather
     val weatherHourlyList = state.value.hashMap[location]?.weatherHourlyList
     val airPollution = state.value.hashMap[location]?.airPollution
+    val isLoading = state.value.isLoading
 
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -103,7 +104,7 @@ fun WeatherInfoScreen(
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.onEach { _effect ->
-            when(_effect) {
+            when (_effect) {
                 WeatherInfoContract.Effect.UpdateLocationList -> {
                     mainViewModel.sendEvent(MainContract.Event.UpdateLocationList)
                 }
@@ -132,8 +133,8 @@ fun WeatherInfoScreen(
             },
             modifier = Modifier.fillMaxSize()
         )
-        if (!viewModel.isMapContainsLocation(location)) {
-            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
+
+        if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = Color.White
@@ -365,6 +366,8 @@ fun WeatherInfoScreen(
                     }
                 }
             )
+        } else if (!viewModel.isMapContainsLocation(location)) {
+            viewModel.sendEvent(WeatherInfoContract.Event.RequestWeatherInfo)
         } else {
             Text("데이터 없음")
         }

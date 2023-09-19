@@ -9,6 +9,7 @@ import com.example.myweather.domain.ApiState
 import com.example.myweather.domain.GeocodingData
 import com.example.myweather.repository.GeocodingRepository
 import com.example.myweather.repository.LocationRepository
+import com.example.myweather.utils.floorUnder4
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,6 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.floor
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -110,8 +110,8 @@ class SearchViewModel @Inject constructor(
     private fun GeocodingData.toLocationEntity() =
         LocationEntity(
             latAndLon = LatAndLon(
-                latitude = floor(((lat ?: 0.0)) * 10000) / 10000,
-                longitude = floor(((lon ?: 0.0)) * 10000) / 10000
+                latitude = lat?.floorUnder4() ?: 0.0,
+                longitude = lon?.floorUnder4() ?: 0.0
             ),
             name = name ?: ""
         )
