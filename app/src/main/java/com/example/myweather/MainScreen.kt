@@ -153,7 +153,7 @@ fun BottomBar(pagerState: PagerState, onListClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp)
-            .background(color = Azure)
+            .background(color = Color(0xFF8399b0))
             .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Icon(
