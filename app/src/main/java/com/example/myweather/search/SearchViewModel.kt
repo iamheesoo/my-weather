@@ -34,12 +34,6 @@ class SearchViewModel @Inject constructor(
         )
     }
 
-    override fun initialState() {
-    }
-
-    override fun loadData() {
-    }
-
     override fun handleEvent(event: SearchContract.Event) {
         when (event) {
             is SearchContract.Event.UpdateTextFieldValue -> {

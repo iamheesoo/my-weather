@@ -27,12 +27,6 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    override fun initialState() {
-    }
-
-    override fun loadData() {
-    }
-
     override fun handleEvent(event: MainContract.Event) {
         when (event) {
             is MainContract.Event.UpdateCurrentLocation -> {

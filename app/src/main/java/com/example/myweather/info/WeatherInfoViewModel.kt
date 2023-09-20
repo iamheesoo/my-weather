@@ -47,19 +47,6 @@ class WeatherInfoViewModel @Inject constructor(
         )
     }
 
-    override fun initialState() {
-        Logger.d("!!! initialState")
-
-    }
-
-    override fun loadData() {
-        Logger.d("!!! loadData")
-//        location?.let {
-//            requestGetWeather(it)
-//        }
-
-    }
-
     override fun handleEvent(event: WeatherInfoContract.Event) {
         when (event) {
             is WeatherInfoContract.Event.RequestWeatherInfo -> {

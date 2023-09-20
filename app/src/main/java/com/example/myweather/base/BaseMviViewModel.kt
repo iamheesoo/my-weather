@@ -43,11 +43,6 @@ abstract class BaseMviViewModel<State : UiState, Event : UiEvent, Effect : UiEff
      */
     private fun subscribeEvents() {
         viewModelScope.launch {
-            _loadingEvent.collect {
-                handleLoadingEvent(it)
-            }
-        }
-        viewModelScope.launch {
             event.collect {
                 handleEvent(it)
             }
@@ -76,40 +71,6 @@ abstract class BaseMviViewModel<State : UiState, Event : UiEvent, Effect : UiEff
         _uiState.value = newState
     }
 
-    private fun handleLoadingEvent(event: BaseContract.LoadEvent) {
-        when (event) {
-            is BaseContract.LoadEvent.LoadData -> {
-                loadData() // 데이터요청하고
-                sendLoadingEvent(BaseContract.LoadEvent.Loading) // 로딩중표시
-            }
-            is BaseContract.LoadEvent.Refresh -> {
-                initialState()
-                _loadingState.value = BaseContract.LoadState.REFRESH
-            }
-            is BaseContract.LoadEvent.Loading -> {
-                _loadingState.value = BaseContract.LoadState.LOADING
-            }
-            is BaseContract.LoadEvent.Complete -> {
-                _loadingState.value = BaseContract.LoadState.COMPLETE
-            }
-            is BaseContract.LoadEvent.Error -> {
-                _loadingState.value = BaseContract.LoadState.ERROR
-            }
-        }
-    }
-
-    abstract fun initialState()
-    protected abstract fun loadData()
-
-    open fun onRefresh() {
-        sendLoadingEvent(BaseContract.LoadEvent.Refresh)
-    }
-
-    fun sendLoadingEvent(event: BaseContract.LoadEvent) {
-        viewModelScope.launch {
-            _loadingEvent.emit(event)
-        }
-    }
 }
 
 interface UiState
