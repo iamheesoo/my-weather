@@ -1,15 +1,15 @@
 package com.example.myweather
 
 import android.content.Context
-import com.example.myweather.database.LocationDatabase
-import com.example.myweather.domain.GeocodingApi
-import com.example.myweather.domain.WeatherApi
-import com.example.myweather.repository.GeocodingRepository
-import com.example.myweather.repository.GeocodingRepositoryImpl
-import com.example.myweather.repository.LocationRepository
-import com.example.myweather.repository.LocationRepositoryImpl
-import com.example.myweather.repository.WeatherRepository
-import com.example.myweather.repository.WeatherRepositoryImpl
+import com.example.myweather.data.database.LocationDatabase
+import com.example.myweather.data.api.GeocodingApi
+import com.example.myweather.data.api.WeatherApi
+import com.example.myweather.domain.repository.GeocodingRepository
+import com.example.myweather.data.repository.GeocodingRepositoryImpl
+import com.example.myweather.domain.repository.LocationRepository
+import com.example.myweather.data.repository.LocationRepositoryImpl
+import com.example.myweather.domain.repository.WeatherRepository
+import com.example.myweather.data.repository.WeatherRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
