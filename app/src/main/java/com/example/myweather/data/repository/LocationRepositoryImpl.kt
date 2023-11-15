@@ -6,8 +6,9 @@ import com.example.myweather.domain.local.LocationEntity
 import com.example.myweather.domain.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class LocationRepositoryImpl(
+class LocationRepositoryImpl @Inject constructor(
     private val locationDatabase: LocationDatabase
 ) : LocationRepository {
     override suspend fun getLocationData(): Flow<List<LocationEntity>> {

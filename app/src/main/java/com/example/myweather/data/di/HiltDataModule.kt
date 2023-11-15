@@ -1,11 +1,16 @@
-package com.example.myweather.data.network
+package com.example.myweather.data.di
 
+import android.content.Context
 import com.example.myweather.data.api.GeocodingApi
 import com.example.myweather.data.api.WeatherApi
+import com.example.myweather.data.database.LocationDatabase
+import com.example.myweather.data.network.GEOCODING_API_URL
+import com.example.myweather.data.network.WEATHER_API_URL
 import com.orhanobut.logger.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,10 +22,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiService {
-    private const val WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/"
-    private const val GEOCODING_API_URL = "https://api.openweathermap.org/geo/1.0/"
-
+object HiltApiModule {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(
             HttpLoggingInterceptor(
@@ -35,7 +37,9 @@ object ApiService {
             ).setLevel(HttpLoggingInterceptor.Level.BODY)
         ).build()
 
-    private val weatherRetrofit: WeatherApi by lazy {
+    @Provides
+    @Singleton
+    fun weatherRetrofitCreate(): WeatherApi =
         Retrofit.Builder()
             .baseUrl(WEATHER_API_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
@@ -43,9 +47,10 @@ object ApiService {
             .client(okHttpClient)
             .build()
             .create(WeatherApi::class.java)
-    }
 
-    private val geocodingRetrofit: GeocodingApi by lazy {
+    @Provides
+    @Singleton
+    fun geocodingRetrofitCreate(): GeocodingApi =
         Retrofit.Builder()
             .baseUrl(GEOCODING_API_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
@@ -53,13 +58,16 @@ object ApiService {
             .client(okHttpClient)
             .build()
             .create(GeocodingApi::class.java)
+}
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+object HiltDatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideLocationDatabase(@ApplicationContext context: Context): LocationDatabase {
+        return LocationDatabase.getInstance(context)
     }
-
-    @Provides
-    @Singleton
-    fun weatherRetrofitCreate(): WeatherApi = weatherRetrofit
-
-    @Provides
-    @Singleton
-    fun geocodingRetrofitCreate(): GeocodingApi = geocodingRetrofit
 }

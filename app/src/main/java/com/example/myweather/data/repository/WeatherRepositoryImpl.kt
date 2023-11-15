@@ -10,8 +10,9 @@ import com.example.myweather.data.network.apiCallSerialize
 import com.example.myweather.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class WeatherRepositoryImpl(
+class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApi
 ) : WeatherRepository {
     override suspend fun getWeather(lat: Double, lon: Double): Flow<ApiState<WeatherResponse>> {

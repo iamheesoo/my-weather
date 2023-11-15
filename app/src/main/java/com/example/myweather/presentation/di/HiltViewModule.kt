@@ -1,4 +1,4 @@
-package com.example.myweather
+package com.example.myweather.presentation.di
 
 import android.content.Context
 import com.example.myweather.data.database.LocationDatabase
@@ -10,6 +10,7 @@ import com.example.myweather.domain.repository.LocationRepository
 import com.example.myweather.data.repository.LocationRepositoryImpl
 import com.example.myweather.domain.repository.WeatherRepository
 import com.example.myweather.data.repository.WeatherRepositoryImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,28 +20,18 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object HiltAppModule {
-    @Provides
-    @Singleton
-    fun provideWeatherRepository(weatherApi: WeatherApi): WeatherRepository {
-        return WeatherRepositoryImpl(weatherApi)
-    }
+abstract class HiltViewModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideGeocodingRepository(geocodingApi: GeocodingApi): GeocodingRepository {
-        return GeocodingRepositoryImpl(geocodingApi)
-    }
+    abstract fun bindWeatherRepository(impl: WeatherRepositoryImpl): WeatherRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideLocationRepository(database: LocationDatabase): LocationRepository {
-        return LocationRepositoryImpl(database)
-    }
+    abstract fun bindGeocodingRepository(impl: GeocodingRepositoryImpl): GeocodingRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideLocationDatabase(@ApplicationContext context: Context): LocationDatabase {
-        return LocationDatabase.getInstance(context)
-    }
+    abstract fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
+
 }

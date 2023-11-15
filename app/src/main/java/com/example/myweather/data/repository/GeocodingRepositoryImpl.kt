@@ -8,8 +8,9 @@ import com.example.myweather.data.network.apiCallSerialize
 import com.example.myweather.domain.repository.GeocodingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class GeocodingRepositoryImpl(private val geocodingApi: GeocodingApi) : GeocodingRepository {
+class GeocodingRepositoryImpl @Inject constructor(private val geocodingApi: GeocodingApi) : GeocodingRepository {
     override suspend fun getGeocoding(city: String): Flow<ApiState<List<GeocodingData>>> {
         return flow {
             val map = hashMapOf<String, String>().apply {
